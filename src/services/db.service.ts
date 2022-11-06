@@ -13,17 +13,17 @@ function Db(this: any) {
 
 Db.prototype.connect = async function() {
     try {
-        await this.client.connect()        
+        await this.client.connect()
+        return 'Db connected'        
     } catch(e) {
         console.error(e)
+        throw new Error('Falha ao connectar ao banco de dados')
     }
 }
 
 Db.prototype.query = async function(query: string, params: string) {
     await this.connect()
-    // console.log("Database query: "+query)
     const result = await this.client.query(query, params)
-    // this.client.end()
     return result
 }
 

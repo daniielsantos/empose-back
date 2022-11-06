@@ -1,28 +1,39 @@
 import "dotenv/config"
-// require("dotenv").config()
-jest.mock("../services/db.service")
 import { db } from "../services/db.service"
-const dbConnect = jest.fn().mockReturnValueOnce(true)
-db.connect.mockReturnValue({ connect: dbConnect })
+jest.mock('pg')
+const pg = require('pg')
+const dbMock = jest.fn().mockReturnValueOnce('ok')
+pg.Pool.mockReturnValue({ connect: dbMock })
 
-
-beforeEach(() => {
-    dbConnect.mockClear()
-    db.connect.mockClear()
-})
 
 const makeSut = () => {
     return db
 }
-
-describe("Should connect with postgres database", () => {
-     it("Connection with database", async () => {
-        const sut = makeSut()
-        // dbConnect.mockReturnValueOnce(false)
-        const result = await sut.connect()
-        expect(result.connect()).toEqual(true)
-        expect(db.connect).toHaveBeenCalledTimes(1)
-    })
+beforeEach(() => {
+    dbMock.mockClear()
+    pg.Pool.mockClear()
 })
 
+describe("Db service",() => {
+    
+    test('should return ok if database is connected', async () => {
+        const sut = makeSut()
+        dbMock.mockReturnValueOnce('ok')
+        const result = await sut.connect()
+        expect(result).toEqual('Db connected')
+    });
+
+    test('should return error if not connected', async () => {
+        const sut = makeSut()
+        dbMock.mockImplementationOnce(() => {
+            throw new Error()
+        })
+
+        try {
+            const result = await sut.connect()
+        } catch (error) {
+            expect(error.message).toBe("Falha ao connectar ao banco de dados")
+        }
+    });
+})
 
