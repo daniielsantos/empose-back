@@ -1,16 +1,17 @@
 import { Request, Response } from "express"
 import { Client } from "../model/client.model"
-import { ClientRepository } from "../repository/client.repository"
+import { Company } from "../model/company.model"
+import { clientRepository } from "../repository/client.repository"
 
 
 
 function ClientService(this: any) {
-    this.clientRepository = new (ClientRepository as any)
+    this.clientRepository = clientRepository
 }
 
-ClientService.prototype.getClients = async function() {
+ClientService.prototype.getClients = async function(company: Company) {
     try {
-        const result = await this.clientRepository.getClients()
+        const result = await this.clientRepository.getClients(company.id)
         return result.rows
     } catch(e) {
         console.error(e)
@@ -20,9 +21,7 @@ ClientService.prototype.getClients = async function() {
 
 ClientService.prototype.saveClient = async function(client: Client) {
     try {
-        client.createdAt = new Date
-        client.updatedAt = new Date
-        
+        client.created_at = new Date
         const result = await this.clientRepository.saveClient(client)
         return result
     } catch(e) {
@@ -32,9 +31,7 @@ ClientService.prototype.saveClient = async function(client: Client) {
 
 ClientService.prototype.updateClient = async function(client: Client) {
     try {
-        // client.createdAt = new Date
-        client.updatedAt = new Date
-        
+        client.updated_at = new Date
         const result = await this.clientRepository.updateClient(client)
         return result
     } catch(e) {

@@ -25,23 +25,23 @@ UserService.prototype.userLogin = async function(user: Users) {
         const result = await this.userRepository.getUser(user)
         const usr = result.rows[0]
         if(!usr)
-            return null
+            throw new Error("usuario nao encontrado")
         
         const isValid = await this.bcrypt.compare(user.password, usr.password)
         if(isValid) {
             const payload = {
                 email: usr.email,
-                name: usr.name
+                name: usr.name,
+                company_id: usr.company_id
             }
             const token = jwt.sign(payload, process.env.SECRET as string)
             delete usr.password
             return { token, user: usr }
         } else {
-            return null
+            throw new Error("usuario ou senha invalidos")
         }
     } catch(e) {
-        console.error(e)
-        return e
+        throw new Error("falha ao autenticar")
     }
 }
 

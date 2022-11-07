@@ -18,14 +18,14 @@ CompanyRepository.prototype.getCompany = async function(company: Company):Promis
 }
 
 CompanyRepository.prototype.saveCompany = async function(company: Company): Promise<Company> {
-    company.createdAt = new Date
-    const query = format(`INSERT INTO Company(name, email, cnpj, address, createdat) VALUES (%L) RETURNING *`, Object.values(company)) 
+    company.created_at = new Date
+    const query = format(`INSERT INTO Company(name, email, cnpj, address, created_at) VALUES (%L) RETURNING *`, Object.values(company)) 
     return this.db.query(query)
 }
 
 CompanyRepository.prototype.updateCompany = async function(company: Company): Promise<Company> {
-    company.updatedAt = new Date
-    const query = `UPDATE Company SET "name" = $2, "email" = $3, "cnpj" = $4, "address" = $5, "updatedat" = $6 WHERE id = $1 RETURNING *`
+    company.updated_at = new Date
+    const query = `UPDATE Company SET "name" = $2, "email" = $3, "cnpj" = $4, "address" = $5, "updated_at" = $6 WHERE id = $1 RETURNING *`
     return this.db.query(query, Object.values(company))
 }
 

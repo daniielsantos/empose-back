@@ -6,7 +6,7 @@ export class Company {
       public email?: string,
       public cnpj?: string,
       public address?: string,
-      public createdAt?: Date,
-      public updatedAt?: Date,
+      public created_at?: Date,
+      public updated_at?: Date,
     ) {}
 }

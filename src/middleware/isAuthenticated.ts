@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import * as jwt from 'jsonwebtoken';
 import { Req } from '../types/request';
 

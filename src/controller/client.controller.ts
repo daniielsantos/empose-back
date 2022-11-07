@@ -1,14 +1,21 @@
 import { Request, Response } from "express"
 import { Client } from "../model/client.model"
+import { Company } from "../model/company.model"
 import { clientService } from "../services/client.service"
+import { Req } from "../types/request"
 
 function ClientController(this: any) {
     this.clientService = clientService
 }
 
-ClientController.prototype.getClients = async function(req: Request, res: Response) {
+ClientController.prototype.getClients = async function(req: Req, res: Response) {
     try {
-        const result: Client[] = await this.clientService.getClients()
+        const user = JSON.stringify(req.user)
+        const userParsed = JSON.parse(user)
+        const company: Company = {
+            id: userParsed.company_id
+        }
+        const result: Client[] = await this.clientService.getClients(company)
         res.send(result)
     } catch(e) {
         console.error(e.message)

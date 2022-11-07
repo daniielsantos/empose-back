@@ -11,7 +11,7 @@ UserController.prototype.getUser = async function(req: Request, res: Response) {
         const result: Users = await this.userService.getUser(req.body)
         res.send(result)
     } catch(e) {
-        console.error(e)
+        res.status(400).send({ message: e.message })
     }
 }
 UserController.prototype.userLogin = async function(req: Request, res: Response) {
@@ -21,7 +21,7 @@ UserController.prototype.userLogin = async function(req: Request, res: Response)
             return res.status(400).json({message: "Usuario ou senha invalidos"})
         res.send(result)
     } catch(e) {
-        console.error(e)
+        res.status(400).send({ message: e.message })
     }
 }
 
@@ -30,7 +30,6 @@ UserController.prototype.saveUser = async function(req: Request, res: Response) 
         const result = await this.userService.saveUser(req.body)
         res.send(result)
     } catch(e) {
-        console.error(e.message)
         res.status(400).send({ message: e.message })
     }
 }
