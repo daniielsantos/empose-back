@@ -12,6 +12,7 @@ import clientRoute from "./routes/client.route"
 import emailSenderRoute from "./routes/email.sender.route"
 import companyRoute from "./routes/company.route"
 import usersRoute from "./routes/users.route"
+import paymentMethodRoute from "./routes/payment.method.route"
 const cors = require("cors")
 const express = require("express")
 
@@ -23,9 +24,10 @@ app.use("/api/v1/", companyRoute.router)
 app.use("/api/v1/", clientRoute.router)
 app.use("/api/v1/", emailSenderRoute.router)
 app.use("/api/v1/", usersRoute.router)
+app.use("/api/v1/", paymentMethodRoute.router)
 
 
-
+// fazer uploade de arquivos no front e back
 
 
 

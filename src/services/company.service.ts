@@ -17,9 +17,9 @@ CompanyService.prototype.getCompanies = async function() {
     }
 }
 
-CompanyService.prototype.getCompany = async function(company: Company) {
+CompanyService.prototype.getCompany = async function(companyId: number) {
     try {
-        const result = await this.companyRepository.getCompany(company)
+        const result = await this.companyRepository.getCompany(companyId)
         return result.rows
     } catch(e) {
         console.error(e.message)
@@ -44,6 +44,15 @@ CompanyService.prototype.updateCompany = async function(company: Company) {
     } catch(e) {
         console.error(e.message)
         throw new Error("Falha ao atualizar empresa")
+    }
+}
+
+CompanyService.prototype.deleteCompany = async function(company: Company) {
+    try {        
+        const result = await this.companyRepository.deleteCompany(company)
+        return result.rows
+    } catch(e) {
+        throw new Error("Falha ao deletar empresa "+ e.message)
     }
 }
 

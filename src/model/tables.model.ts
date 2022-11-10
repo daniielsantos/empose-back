@@ -44,7 +44,6 @@ Tables.prototype.create = async function(callback) {
     )`    
 
     result = await this.db.query(query)
-    // client_address("address","city","state","zip_code","country", "client_id")
     query = `CREATE TABLE IF NOT EXISTS client_address(
         id SERIAL PRIMARY KEY,
         address CHARACTER VARYING(250) NOT NULL,
@@ -58,15 +57,19 @@ Tables.prototype.create = async function(callback) {
         updated_at TIMESTAMP
     )`    
     result = await this.db.query(query)
-    
-    //   public id?: number,
-    //   public address?: string,
-    //   public city?: string,
-    //   public state?: string,
-    //   public zipCode?: string,
-    //   public country?: string
-}
 
+    query = `CREATE TABLE IF NOT EXISTS payment_method(
+        id SERIAL PRIMARY KEY,
+        name CHARACTER VARYING(150) NOT NULL,
+        description CHARACTER VARYING(250),
+        company_id INT NOT NULL REFERENCES Company(id),
+        created_at TIMESTAMP,
+        updated_at TIMESTAMP
+    )`
+    result = await this.db.query(query)
+    
+    console.log("Tabelas criadas")
+}
 
 
 export default new Tables

@@ -9,7 +9,8 @@ function CompanyController() {
 
 CompanyController.prototype.getCompany = async function(req: Request, res: Response) {
     try {
-        const result: Company = await this.companyService.getCompany(req.body)
+        console.log("aaaaa", req.params.id)
+        const result: Company = await this.companyService.getCompany(req.params.id)
         res.send(result)
     } catch(e) {
         console.error(e.message)
@@ -40,6 +41,16 @@ CompanyController.prototype.saveCompany = async function(req: Request, res: Resp
 CompanyController.prototype.updateCompany = async function(req: Request, res: Response) {
     try {
         const result: Users = await this.companyService.updateCompany(req.body)
+        res.send(result)
+    } catch(e) {
+        console.error(e.message)
+        res.status(400).send({ message: e.message })
+    }
+}
+
+CompanyController.prototype.deleteCompany = async function(req: Request, res: Response) {
+    try {
+        const result: Users = await this.companyService.deleteCompany(req.body)
         res.send(result)
     } catch(e) {
         console.error(e.message)

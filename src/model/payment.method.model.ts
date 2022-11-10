@@ -1,12 +1,10 @@
 import { Company } from "./company.model";
 
-export class Users {
+export class PaymentMethods {
     constructor(
       public id?: number,
       public name?: string,
-      public email?: string,
-      public password?: string,
-      public role?: string,
+      public description?: string,
       public company?: Company,
       public created_at?: Date,
       public updated_at?: Date,
