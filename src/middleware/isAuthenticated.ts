@@ -4,7 +4,6 @@ import { Req } from '../types/request';
 
 export async function isAuthenticated(req: Req, res: Response, next: any) {
     let token
-    
     try {
         token = req.headers.authorization?.split(' ')[1]
     } catch (error) {

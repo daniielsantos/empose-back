@@ -1,25 +1,27 @@
-import { Router, Express, Response } from "express"
-import { paymentMethodController } from "../controller/payment.method.controller"
+import { Router, Response } from "express"
 import { isAuthenticated } from "../middleware/isAuthenticated"
 import { Req } from "../types/request"
+
 const router = Router()
 
-router.use(isAuthenticated)
+export default function(paymentMethodController: any) {
 
-router.get("/payment-methods", async (req: Req, res: Response) => {
-    await paymentMethodController.getPaymentMethods(req, res)
-})
-router.get("/payment-methods/:id", async (req: Req, res: Response) => {
-    await paymentMethodController.getPaymentMethod(req, res)
-})
-router.post("/payment-methods", async (req: Req, res: Response) => {
-    await paymentMethodController.savePaymentMethod(req, res)
-})
-router.put("/payment-methods", async (req: Req, res: Response) => {
-    await paymentMethodController.updatePaymentMethod(req, res)
-})
-router.delete("/payment-methods", async (req: Req, res: Response) => {
-    await paymentMethodController.deletePaymentMethod(req, res)
-})
-
-export = { router }
+    router.use(isAuthenticated)
+    
+    router.get("/payment-methods", async (req: Req, res: Response) => {
+        await paymentMethodController.getPaymentMethods(req, res)
+    })
+    router.get("/payment-methods/:id", async (req: Req, res: Response) => {
+        await paymentMethodController.getPaymentMethod(req, res)
+    })
+    router.post("/payment-methods", async (req: Req, res: Response) => {
+        await paymentMethodController.savePaymentMethod(req, res)
+    })
+    router.put("/payment-methods", async (req: Req, res: Response) => {
+        await paymentMethodController.updatePaymentMethod(req, res)
+    })
+    router.delete("/payment-methods", async (req: Req, res: Response) => {
+        await paymentMethodController.deletePaymentMethod(req, res)
+    })
+    return router
+}

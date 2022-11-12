@@ -18,18 +18,17 @@ PaymentMethodService.prototype.getPaymentMethods = async function(company: Compa
 PaymentMethodService.prototype.getPaymentMethod = async function(paymentId: number) {
     try {
         const result = await this.paymentMethod.getPaymentMethod(paymentId)
-        return result.rows
+        return result.rows[0]
     } catch(e) {
         throw new Error(e.message)
     }
 }
 
-PaymentMethodService.prototype.savePaymentMethod = async function(paymentMethod: PaymentMethods, company: Company) {
+PaymentMethodService.prototype.savePaymentMethod = async function(paymentMethod: PaymentMethods) {
     try {
         paymentMethod.created_at = new Date
-        paymentMethod.company = company
         const result = await this.paymentMethod.savePaymentMethod(paymentMethod)
-        return result.rows
+        return result.rows[0]
     } catch(e) {
         throw new Error(e.message)
     }
@@ -37,9 +36,12 @@ PaymentMethodService.prototype.savePaymentMethod = async function(paymentMethod:
 
 PaymentMethodService.prototype.updatePaymentMethod = async function(paymentMethod: PaymentMethods) {
     try {
+        let pay = await this.getPaymentMethod(paymentMethod.id)
+        if(!pay)
+            throw new Error("metodo de pagamento nao encontrado")
         paymentMethod.updated_at = new Date
         const result = await this.paymentMethod.updatePaymentMethod(paymentMethod)
-        return result.rows
+        return result.rows[0]
     } catch(e) {
         throw new Error(e.message)
     }
@@ -47,8 +49,11 @@ PaymentMethodService.prototype.updatePaymentMethod = async function(paymentMetho
 
 PaymentMethodService.prototype.deletePaymentMethod = async function(paymentMethod: PaymentMethods) {
     try {
-        const result = await this.paymentMethod.deletePaymentMethod(paymentMethod)
-        return result.rows
+        let pay = await this.getPaymentMethod(paymentMethod.id)
+        if(!pay)
+            throw new Error("metodo de pagamento nao encontrado")
+        await this.paymentMethod.deletePaymentMethod(paymentMethod)
+        return {message: "metodo de pagamento deletado"}
     } catch(e) {
         throw new Error(e.message)
     }

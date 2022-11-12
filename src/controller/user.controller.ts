@@ -8,70 +8,39 @@ function UserController() {
     this.userService = userService
 }
 
-UserController.prototype.getCompany = function(req: Req, res: Response) {
-    const user = JSON.stringify(req.user)
-    const userParsed = JSON.parse(user)
+UserController.prototype.getCompany = function(user: any) {
     const company: Company = {
-        id: userParsed.company_id
+        id: user.company_id
     }
     return company
 }
 
-UserController.prototype.getUser = async function(req: Request, res: Response) {
-    try {
-        const result: Users = await this.userService.getUser(req.params.id)
-        res.send(result)
-    } catch(e) {
-        res.status(400).send({ message: e.message })
-    }
+UserController.prototype.getUser = async function(userId: number): Promise<Users> {
+    return this.userService.getUser(userId)
 }
 
-UserController.prototype.getUsers = async function(req: Request, res: Response) {
-    try {
-        const company: Company = this.getCompany(req, res)
-        const result: Users = await this.userService.getUsers(company)
-        res.send(result)
-    } catch(e) {
-        res.status(400).send({ message: e.message })
-    }
+UserController.prototype.getUsers = async function(user: any): Promise<Users[]> {
+    const company: Company = this.getCompany(user)
+    return this.userService.getUsers(company)
 }
 
-UserController.prototype.userLogin = async function(req: Request, res: Response) {
-    try {
-        const result: Users = await this.userService.userLogin(req.body)
-        if(!result)
-            return res.status(400).json({message: "Usuario ou senha invalidos"})
-        res.send(result)
-    } catch(e) {
-        res.status(400).send({ message: e.message })
-    }
+UserController.prototype.userLogin = async function(user: Users) {
+    const result: Users = await this.userService.userLogin(user)
+    if(!result)
+        throw new Error("Usuario ou senha invalidos")
+    return result
 }
 
-UserController.prototype.saveUser = async function(req: Request, res: Response) {
-    try {
-        const result = await this.userService.saveUser(req.body)
-        res.send(result)
-    } catch(e) {
-        res.status(400).send({ message: e.message })
-    }
+UserController.prototype.saveUser = async function(user: Users): Promise<Users> {
+    return this.userService.saveUser(user)
 }
 
-UserController.prototype.updateUser = async function(req: Req, res: Response) {
-    try {
-        const result = await this.userService.updateUser(req.body)
-        res.send(result)
-    } catch(e) {
-        res.status(400).send({ message: e.message })
-    }
+UserController.prototype.updateUser = async function(user: Users): Promise<Users> {
+    return this.userService.updateUser(user)
 }
 
-UserController.prototype.deleteUser = async function(req: Req, res: Response) {
-    try {
-        const result = await this.userService.deleteUser(req.body)
-        res.send(result)
-    } catch(e) {
-        res.status(400).send({ message: e.message })
-    }
+UserController.prototype.deleteUser = async function(user: Users): Promise<void> {
+    return this.userService.deleteUser(user)
 }
 
 

@@ -7,41 +7,36 @@ import { Req } from "../types/request"
 function ClientController(this: any) {
     this.clientService = clientService
 }
-
-ClientController.prototype.getClients = async function(req: Req, res: Response) {
-    try {
-        const user = JSON.stringify(req.user)
-        const userParsed = JSON.parse(user)
-        const company: Company = {
-            id: userParsed.company_id
-        }
-        const result: Client[] = await this.clientService.getClients(company)
-        res.send(result)
-    } catch(e) {
-        console.error(e.message)
-        res.send({message: "falha ao consultar clientes", error: e.message })
+ClientController.prototype.getCompany = function(user: any) {
+    const company: Company = {
+        id: user.company_id
     }
+    return company
 }
 
-ClientController.prototype.saveClient = async function(req: Request, res: Response) {
-    try {
-        const result: Client[] = await this.clientService.saveClient(req.body)
-        res.send(result)
-    } catch(e) {
-        console.error(e.message)
-        res.send({message: "falha ao salvar cliente", error: e.message })
-    }
+ClientController.prototype.getClients = async function(user: any): Promise<Client[]>{
+    const company = this.getCompany(user)
+    return this.clientService.getClients(company)
 }
 
-ClientController.prototype.updateClient = async function(req: Request, res: Response) {
-    try {
-        const result: Client = await this.clientService.updateClient(req.body)
-        res.send(result)
-    } catch(e) {
-        console.error(e.message)
-        res.send({message: "falha ao atualizar cliente", error: e.message })
-    }
+ClientController.prototype.getClient = async function(clientId: number): Promise<Client> {
+    return this.clientService.getClient(clientId)
 }
+
+ClientController.prototype.saveClient = async function(client: Client, user: any): Promise<Client> {
+    const company: Company = this.getCompany(user)
+    client.company = company
+    return this.clientService.saveClient(client)
+}
+
+ClientController.prototype.updateClient = async function(client: Client): Promise<Client> {
+    return this.clientService.updateClient(client)
+}
+
+ClientController.prototype.deleteClient = async function(client: Client): Promise<Client> {
+    return this.clientService.deleteClient(client)
+}
+
 const clientController = new (ClientController as any)
 export { clientController } 
 

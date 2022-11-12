@@ -5,7 +5,7 @@ function Tables() {
     this.create()
 }
 
-Tables.prototype.create = async function(callback) {
+Tables.prototype.create = async function() {
     let query
     let result
     
@@ -18,7 +18,7 @@ Tables.prototype.create = async function(callback) {
         created_at TIMESTAMP,
         updated_at TIMESTAMP
     )`
-    result = await this.db.query(query)
+    await this.db.query(query)
 
     query = `CREATE TABLE IF NOT EXISTS Users(
         id SERIAL PRIMARY KEY,
@@ -26,11 +26,11 @@ Tables.prototype.create = async function(callback) {
         email CHARACTER VARYING(100) NOT NULL,
         password CHARACTER VARYING(255) NOT NULL,
         role CHARACTER VARYING(100) NOT NULL,
-        company_id INT NOT NULL REFERENCES Company(id),
+        company_id INT NOT NULL REFERENCES Company(id) ON DELETE CASCADE,
         created_at TIMESTAMP,
         updated_at TIMESTAMP
     )`    
-    result = await this.db.query(query)
+    await this.db.query(query)
 
     query = `CREATE TABLE IF NOT EXISTS Client(
         id SERIAL PRIMARY KEY,
@@ -38,12 +38,12 @@ Tables.prototype.create = async function(callback) {
         email CHARACTER VARYING(100) NOT NULL,
         cpf CHARACTER VARYING(11) NOT NULL,
         phone_number CHARACTER VARYING(20) NOT NULL,
-        company_id INT NOT NULL REFERENCES Company(id),
+        company_id INT NOT NULL REFERENCES Company(id) ON DELETE CASCADE,
         created_at TIMESTAMP,
         updated_at TIMESTAMP
     )`    
 
-    result = await this.db.query(query)
+    await this.db.query(query)
     query = `CREATE TABLE IF NOT EXISTS client_address(
         id SERIAL PRIMARY KEY,
         address CHARACTER VARYING(250) NOT NULL,
@@ -51,24 +51,56 @@ Tables.prototype.create = async function(callback) {
         state CHARACTER VARYING(100) NOT NULL,
         zip_code CHARACTER VARYING(20) NOT NULL,
         country CHARACTER VARYING(100) NOT NULL,
-        client_id INT NOT NULL REFERENCES Client(id),
-        company_id INT NOT NULL REFERENCES Company(id),
+        client_id INT NOT NULL REFERENCES Client(id) ON DELETE CASCADE,
+        company_id INT NOT NULL REFERENCES Company(id) ON DELETE CASCADE,
         created_at TIMESTAMP,
         updated_at TIMESTAMP
     )`    
-    result = await this.db.query(query)
+    await this.db.query(query)
 
     query = `CREATE TABLE IF NOT EXISTS payment_method(
         id SERIAL PRIMARY KEY,
         name CHARACTER VARYING(150) NOT NULL,
         description CHARACTER VARYING(250),
-        company_id INT NOT NULL REFERENCES Company(id),
+        company_id INT NOT NULL REFERENCES Company(id) ON DELETE CASCADE,
         created_at TIMESTAMP,
         updated_at TIMESTAMP
     )`
-    result = await this.db.query(query)
+    await this.db.query(query)
+
+    query = `CREATE TABLE IF NOT EXISTS Category(
+        id SERIAL PRIMARY KEY,
+        name CHARACTER VARYING(150) NOT NULL,
+        description CHARACTER VARYING(250),
+        company_id INT NOT NULL REFERENCES Company(id) ON DELETE CASCADE,
+        created_at TIMESTAMP,
+        updated_at TIMESTAMP
+    )`
+    await this.db.query(query)
+
+    query = `CREATE TABLE IF NOT EXISTS Sku(
+        id SERIAL PRIMARY KEY,
+        name CHARACTER VARYING(150) NOT NULL,
+        description CHARACTER VARYING(150),
+        active BOOLEAN,
+        company_id INT NOT NULL REFERENCES Company(id) ON DELETE CASCADE,
+        created_at TIMESTAMP,
+        updated_at TIMESTAMP
+    )`
+    await this.db.query(query)
+
+    query = `CREATE TABLE IF NOT EXISTS Sku_image(
+        id SERIAL PRIMARY KEY,
+        name CHARACTER VARYING(150),
+        url CHARACTER VARYING(250),
+        sku_id INT NOT NULL REFERENCES Sku(id) ON DELETE CASCADE,
+        company_id INT NOT NULL REFERENCES Company(id) ON DELETE CASCADE,
+        created_at TIMESTAMP,
+        updated_at TIMESTAMP
+    )`
     
-    console.log("Tabelas criadas")
+
+    await this.db.query(query)
 }
 
 

@@ -2,19 +2,19 @@ import { Users } from "../model/user.model"
 import { userRepository } from "../repository/user.repository"
 import { crypt } from "../services/bcrypt.service"
 import * as jwt from "jsonwebtoken"
-import { companyRepository } from "../repository/company.repository"
 import { Company } from "../model/company.model"
+import { companyService } from "./company.service"
 
 function UserService(this: any) {
     this.userRepository = userRepository
-    this.companyRepository = companyRepository
+    this.companyService = companyService
     this.bcrypt = crypt
 }
 
 UserService.prototype.getUserByEmail = async function(user: Users) {
     try {
         const result = await this.userRepository.getUserByEmail(user)
-        return result.rows
+        return result.rows[0]
     } catch(e) {
         throw new Error("falha ao buscar por usuario")
     }
@@ -23,7 +23,7 @@ UserService.prototype.getUserByEmail = async function(user: Users) {
 UserService.prototype.getUser = async function(userId: number) {
     try {
         const result = await this.userRepository.getUser(userId)
-        return result.rows
+        return result.rows[0]
     } catch(e) {
         throw new Error("falha ao buscar por usuario")
     }
@@ -40,8 +40,7 @@ UserService.prototype.getUsers = async function(company: Company) {
 
 UserService.prototype.userLogin = async function(user: Users) {
     try {        
-        const result = await this.userRepository.getUserByEmail(user)
-        const usr = result.rows[0]
+        const usr = await this.getUserByEmail(user)
         if(!usr)
             throw new Error("usuario nao encontrado")
         
@@ -65,19 +64,17 @@ UserService.prototype.userLogin = async function(user: Users) {
 
 UserService.prototype.saveUser = async function(user: Users) {
     try {
-        if(!user.company.id)
-            throw new Error("campo 'company' obrigatorio")
-        let company = await this.companyRepository.getCompany(user.company)
-        if(!company.rows.length)
+        let company = await this.companyService.getCompany(user.company.id)
+        if(!company)
             throw new Error("empresa nao encontrada")
 
         const usr = await this.getUserByEmail(user)
-        if(usr.length) 
-            return "User already exists"
+        if(usr) 
+            throw new Error("email em uso")
         const hash = await this.bcrypt.hash(user.password)
         user.password = hash
         const result = await this.userRepository.saveUser(user)
-        return result.rows
+        return result.rows[0]
     } catch(e) {
         throw new Error(e.message)
     }
@@ -86,8 +83,11 @@ UserService.prototype.saveUser = async function(user: Users) {
 UserService.prototype.updateUser = async function(user: Users) {
     try {
         user.updated_at = new Date
+        let usr = await this.getUser(user.id)
+        if(!usr)
+            throw new Error("usuario nao encontrado")
         const result = await this.userRepository.updateUser(user)
-        return result.rows
+        return result.rows[0]
     } catch(e) {
         throw new Error(e.message)
     }
@@ -95,8 +95,11 @@ UserService.prototype.updateUser = async function(user: Users) {
 
 UserService.prototype.deleteUser = async function(user: Users) {
     try {
-        const result = await this.userRepository.deleteUser(user)
-        return result.rows
+        let usr = await this.getUser(user.id)
+        if(!usr)
+            throw new Error("usuario nao encontrado")
+        await this.userRepository.deleteUser(user)
+        return {message: "usuario deletado"}
     } catch(e) {
         throw new Error(e.message)
     }

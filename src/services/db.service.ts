@@ -25,7 +25,7 @@ Db.prototype.connect = async function() {
 Db.prototype.query = async function(query: string, params: string) {
     await this.connect()
     const result = await this.client.query(query, params)
-    this.client.release()
+    // this.client.release()
     return result
 }
 

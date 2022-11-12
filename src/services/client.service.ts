@@ -14,8 +14,16 @@ ClientService.prototype.getClients = async function(company: Company) {
         const result = await this.clientRepository.getClients(company.id)
         return result.rows
     } catch(e) {
-        console.error(e)
-        return e
+        throw new Error(e.message)
+    }
+}
+
+ClientService.prototype.getClient = async function(clientId: number) {
+    try {
+        const result = await this.clientRepository.getClient(clientId)
+        return result.rows[0]
+    } catch(e) {
+        throw new Error(e.message)
     }
 }
 
@@ -25,17 +33,32 @@ ClientService.prototype.saveClient = async function(client: Client) {
         const result = await this.clientRepository.saveClient(client)
         return result
     } catch(e) {
-        return e
+        throw new Error(e.message)
     }
 }
 
 ClientService.prototype.updateClient = async function(client: Client) {
     try {
+        let pay = await this.getClient(client.id)
+        if(!pay)
+            throw new Error("cliente nao encontrado")
         client.updated_at = new Date
         const result = await this.clientRepository.updateClient(client)
         return result
     } catch(e) {
-        return e
+        throw new Error(e.message)
+    }
+}
+
+ClientService.prototype.deleteClient = async function(client: Client) {
+    try {
+        let pay = await this.getClient(client.id)
+        if(!pay)
+            throw new Error("cliente nao encontrado")
+        await this.clientRepository.deleteClient(client)
+        return { message: "cliente deletado" }
+    } catch(e) {
+        throw new Error(e.message)
     }
 }
 
