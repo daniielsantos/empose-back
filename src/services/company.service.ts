@@ -2,6 +2,7 @@ import { companyRepository } from "../repository/company.repository"
 import { crypt } from "./bcrypt.service"
 import { Company } from "../model/company.model"
 
+
 function CompanyService(this: any) {
     this.companyRepository = companyRepository
     this.bcrypt = crypt

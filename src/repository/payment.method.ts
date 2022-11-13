@@ -14,12 +14,13 @@ PaymentMethod.prototype.getPaymentMethods = async function(companyId: number) {
     return this.db.query(query, [companyId])    
 }
 
-PaymentMethod.prototype.getPaymentMethod = async function(companyId: number) {
+PaymentMethod.prototype.getPaymentMethod = async function(paymentMethodId: number, companyId: number) {
     const query = `SELECT p.id, p.name, p.description, p.created_at, p.updated_at 
     FROM payment_method p
     WHERE p.id = $1
+    AND p.company_id = $2
     `
-    return this.db.query(query, [companyId])    
+    return this.db.query(query, [paymentMethodId, companyId])    
 }
 
 PaymentMethod.prototype.savePaymentMethod = async function(paymentMethod: PaymentMethods) {
@@ -29,7 +30,7 @@ PaymentMethod.prototype.savePaymentMethod = async function(paymentMethod: Paymen
         company_id: paymentMethod.company.id,
         created_at: paymentMethod.created_at
     }
-    const query = format(`INSERT INTO payment_method("name", "description", "company_id", "created_at") VALUES (%L) RETURNING id`, Object.values(payload)) 
+    const query = format(`INSERT INTO payment_method("name", "description", "company_id", "created_at") VALUES (%L) RETURNING *`, Object.values(payload)) 
     return this.db.query(query)
 }
 

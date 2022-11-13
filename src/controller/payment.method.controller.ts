@@ -19,8 +19,9 @@ PaymentMethodController.prototype.getPaymentMethods = async function(user: any):
     return this.paymentMethodService.getPaymentMethods(company)
 }
 
-PaymentMethodController.prototype.getPaymentMethod = async function(paymentId: number): Promise<PaymentMethods> {
-    return this.paymentMethodService.getPaymentMethod(paymentId)
+PaymentMethodController.prototype.getPaymentMethod = async function(paymentId: number, user: any): Promise<PaymentMethods> {
+    const company = this.getCompany(user)
+    return this.paymentMethodService.getPaymentMethod(paymentId, company.id)
 }
 
 PaymentMethodController.prototype.savePaymentMethod = async function(paymentMethod: PaymentMethods, user: any): Promise<PaymentMethods> {

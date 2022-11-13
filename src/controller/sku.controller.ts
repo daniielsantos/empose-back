@@ -17,8 +17,9 @@ SkuController.prototype.getSkus = async function(user: any): Promise<Sku[]>{
     return this.skuService.getSkus(company)
 }
 
-SkuController.prototype.getSku = async function(skuId: number): Promise<Sku> {
-    return this.skuService.getSku(skuId)
+SkuController.prototype.getSku = async function(skuId: number, user: any): Promise<Sku> {
+    const company = this.getCompany(user)
+    return this.skuService.getSku(skuId, company.id)
 }
 
 SkuController.prototype.saveSku = async function(sku: Sku, user: any): Promise<Sku> {

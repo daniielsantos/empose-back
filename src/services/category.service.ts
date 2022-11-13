@@ -17,9 +17,9 @@ CategoryService.prototype.getCategories = async function(company: Company) {
     }
 }
 
-CategoryService.prototype.getCategory = async function(categoryId: number) {
+CategoryService.prototype.getCategory = async function(categoryId: number, companyId: number) {
     try {
-        const result = await this.categoryRepository.getCategory(categoryId)
+        const result = await this.categoryRepository.getCategory(categoryId, companyId)
         return result.rows[0]
     } catch(e) {
         throw new Error(e.message)
@@ -28,7 +28,7 @@ CategoryService.prototype.getCategory = async function(categoryId: number) {
 
 CategoryService.prototype.saveCategory = async function(category: Category) {
     try {
-        category.created_at = new Date
+        category.created_at = new Date()
         const result = await this.categoryRepository.saveCategory(category)
         return result.rows[0]
     } catch(e) {

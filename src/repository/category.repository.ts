@@ -14,12 +14,13 @@ CategoryRepository.prototype.getCategories = async function(companyId: number) {
     return this.db.query(query, [companyId])    
 }
 
-CategoryRepository.prototype.getCategory = async function(categoryId: number) {
+CategoryRepository.prototype.getCategory = async function(categoryId: number, companyId: number) {
     const query = `SELECT c.id, c.name, c.description, c.created_at, c.updated_at
     FROM category c
     WHERE c.id = $1
+    AND c.company_id = $2
     `
-    return this.db.query(query, [categoryId])    
+    return this.db.query(query, [categoryId, companyId])    
 }
 
 CategoryRepository.prototype.saveCategory = async function(category: Category) {
@@ -29,7 +30,7 @@ CategoryRepository.prototype.saveCategory = async function(category: Category) {
         company_id: category.company.id,
         created_at: category.created_at
     }
-    const query = format(`INSERT INTO category("name", "description", "company_id", "created_at") VALUES (%L) RETURNING id`, Object.values(payload)) 
+    const query = format(`INSERT INTO category("name", "description", "company_id", "created_at") VALUES (%L) RETURNING *`, Object.values(payload)) 
     return this.db.query(query)
 }
 

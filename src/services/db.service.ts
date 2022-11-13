@@ -19,14 +19,15 @@ Db.prototype.connect = async function() {
     } catch(e) {
         console.error(e)
         throw new Error('Falha ao connectar ao banco de dados')
+    } finally {
+        if(this.client)
+            this.client.release()
     }
 }
 
 Db.prototype.query = async function(query: string, params: string) {
     await this.connect()
-    const result = await this.client.query(query, params)
-    // this.client.release()
-    return result
+    return this.client.query(query, params)
 }
 
 const db = new (Db as any)

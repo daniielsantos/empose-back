@@ -19,8 +19,9 @@ ClientController.prototype.getClients = async function(user: any): Promise<Clien
     return this.clientService.getClients(company)
 }
 
-ClientController.prototype.getClient = async function(clientId: number): Promise<Client> {
-    return this.clientService.getClient(clientId)
+ClientController.prototype.getClient = async function(clientId: number, user: any): Promise<Client> {
+    let company = this.getCompany(user)
+    return this.clientService.getClient(clientId, company.id)
 }
 
 ClientController.prototype.saveClient = async function(client: Client, user: any): Promise<Client> {

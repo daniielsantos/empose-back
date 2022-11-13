@@ -15,9 +15,9 @@ PaymentMethodService.prototype.getPaymentMethods = async function(company: Compa
     }
 }
 
-PaymentMethodService.prototype.getPaymentMethod = async function(paymentId: number) {
+PaymentMethodService.prototype.getPaymentMethod = async function(paymentId: number, companyId: number) {
     try {
-        const result = await this.paymentMethod.getPaymentMethod(paymentId)
+        const result = await this.paymentMethod.getPaymentMethod(paymentId, companyId)        
         return result.rows[0]
     } catch(e) {
         throw new Error(e.message)

@@ -7,9 +7,8 @@ function ClientRepository(){
 }
 
 ClientRepository.prototype.getClients = async function(companyId: number) {
-    // JOIN company com ON com.id = c.company_id
     const query = `SELECT c.id, c.name, c.email, c.cpf, c.phone_number, c.created_at, c.updated_at,    
-    json_strip_nulls(json_agg(json_build_object('id', ca.id, 'address', ca.address, 'city', ca.city, 'state', ca.state, 'zip_code', ca.zip_code, 'country', ca.country, 'created_at', ca.created_at, 'updated_at', ca.updated_at))) AS address
+    json_strip_nulls(json_agg(json_build_object('id', ca.id, 'address', ca.address, 'city', ca.city, 'state', ca.state, 'zip_code', ca.zip_code, 'country', ca.country))) AS address
     FROM client c
     LEFT JOIN client_address ca ON ca.client_id = c.id
     WHERE c.company_id = $1
@@ -25,13 +24,13 @@ ClientRepository.prototype.getClients = async function(companyId: number) {
     return this.db.query(query, [companyId])    
 }
 
-ClientRepository.prototype.getClient = async function(clientId: number) {
-    // json_strip_nulls(json_build_object('id', com.id, 'name', com.name, 'email', com.email, 'cnpj', com.cnpj, 'address', com.address, 'created_at', com.created_at, 'updated_at', com.updated_at)) AS company,
+ClientRepository.prototype.getClient = async function(clientId: number, companyId: number) {
     const query = `SELECT c.id, c.name, c.email, c.cpf, c.phone_number, c.created_at, c.updated_at, 
-    json_strip_nulls(json_agg(json_build_object('id', ca.id, 'address', ca.address, 'city', ca.city, 'state', ca.state, 'zip_code', ca.zip_code, 'country', ca.country, 'created_at', ca.created_at, 'updated_at', ca.updated_at))) AS address
+    json_strip_nulls(json_agg(json_build_object('id', ca.id, 'address', ca.address, 'city', ca.city, 'state', ca.state, 'zip_code', ca.zip_code, 'country', ca.country))) AS address
     FROM client c
     LEFT JOIN client_address ca ON ca.client_id = c.id
     WHERE c.id = $1
+    AND c.company_id = $2
     GROUP BY 
     c.id,
     c.name,
@@ -41,7 +40,7 @@ ClientRepository.prototype.getClient = async function(clientId: number) {
     c.created_at,
     c.updated_at
     `
-    return this.db.query(query, [clientId])    
+    return this.db.query(query, [clientId, companyId])    
 }
 
 ClientRepository.prototype.saveClient = async function(client: Client) {

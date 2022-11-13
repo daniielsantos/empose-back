@@ -20,9 +20,9 @@ UserService.prototype.getUserByEmail = async function(user: Users) {
     }
 }
 
-UserService.prototype.getUser = async function(userId: number) {
+UserService.prototype.getUser = async function(userId: number, companyId: number) {
     try {
-        const result = await this.userRepository.getUser(userId)
+        const result = await this.userRepository.getUser(userId, companyId)
         return result.rows[0]
     } catch(e) {
         throw new Error("falha ao buscar por usuario")

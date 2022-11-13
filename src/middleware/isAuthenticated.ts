@@ -11,7 +11,7 @@ export async function isAuthenticated(req: Req, res: Response, next: any) {
     }
     if (!token) {
         return res.status(401).json({
-            message: 'Error: No token provided.'
+            message: 'Error: invalid token'
         });
     }
 
@@ -21,7 +21,7 @@ export async function isAuthenticated(req: Req, res: Response, next: any) {
         next();
     } catch (err) {
         return res.status(500).json({
-            message: 'Error: Failed to authenticate token.'
+            message: 'Error: Failed to authenticate token'
         });
     }
 }

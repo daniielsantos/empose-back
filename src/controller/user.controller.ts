@@ -15,8 +15,9 @@ UserController.prototype.getCompany = function(user: any) {
     return company
 }
 
-UserController.prototype.getUser = async function(userId: number): Promise<Users> {
-    return this.userService.getUser(userId)
+UserController.prototype.getUser = async function(userId: number, usr: any): Promise<Users> {
+    let company = this.getCompany(usr)
+    return this.userService.getUser(userId, company.id)
 }
 
 UserController.prototype.getUsers = async function(user: any): Promise<Users[]> {

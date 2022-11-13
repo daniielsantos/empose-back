@@ -1,11 +1,14 @@
 import { Company } from "../model/company.model"
 import { Sku } from "../model/sku.model"
 import { skuRepository } from "../repository/sku.repository"
+import { productService } from "./product.service"
+
 
 
 
 function SkuService(this: any) {
     this.skuRepository = skuRepository
+    this.productService = productService
 }
 
 SkuService.prototype.getSkus = async function(company: Company) {
@@ -17,9 +20,9 @@ SkuService.prototype.getSkus = async function(company: Company) {
     }
 }
 
-SkuService.prototype.getSku = async function(skuId: number) {
+SkuService.prototype.getSku = async function(skuId: number, companyId: number) {
     try {
-        const result = await this.skuRepository.getSku(skuId)
+        const result = await this.skuRepository.getSku(skuId, companyId)
         return result.rows[0]
     } catch(e) {
         throw new Error(e.message)
@@ -29,6 +32,9 @@ SkuService.prototype.getSku = async function(skuId: number) {
 SkuService.prototype.saveSku = async function(sku: Sku) {
     try {
         sku.created_at = new Date
+        let prod = await this.productService.getProduct(sku.product.id, sku.company.id)
+        if(!prod)
+            throw new Error("produto nao encontrado: insira um produto")
         const result = await this.skuRepository.saveSku(sku)
         return result
     } catch(e) {

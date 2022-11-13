@@ -6,7 +6,7 @@ import { categoryService } from "../services/category.service"
 function CategoryController(this: any) {
     this.categoryService = categoryService
 }
-CategoryController.prototype.getCompany = function(user: any) {
+CategoryController.prototype.getCompany = function(user: any): Company {
     const company: Company = {
         id: user.company_id
     }
@@ -18,8 +18,9 @@ CategoryController.prototype.getCategories = async function(user: any): Promise<
     return this.categoryService.getCategories(company)
 }
 
-CategoryController.prototype.getCategory = async function(categoryId: number): Promise<Client> {
-    return this.categoryService.getCategory(categoryId)
+CategoryController.prototype.getCategory = async function(categoryId: number, user: any): Promise<Client> {
+    const company = this.getCompany(user)
+    return this.categoryService.getCategory(categoryId, company.id)
 }
 
 CategoryController.prototype.saveCategory = async function(category: Category, user: any): Promise<Category> {

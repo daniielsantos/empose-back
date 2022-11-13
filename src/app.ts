@@ -6,11 +6,11 @@ import { isAuthenticated } from "./middleware/isAuthenticated"
 const cors = require("cors")
 const express = require("express")
 
-function makeApp(userController, clientController = null, companyController = null, paymentMethodController = null, categoryController = null, skuController = null) {
+function makeApp(userController = null, clientController = null, companyController = null, paymentMethodController = null, categoryController = null, skuController = null, skuInventoryController = null, productController = null, orderController = null) {
     const app = express()
     app.use(express.json())
     app.use(cors())
-    
+
     app.get("/api/v1/users", isAuthenticated, async (req: Req, res: Response) => {
         try {
             const result = await userController.getUsers(req.user)
@@ -22,7 +22,7 @@ function makeApp(userController, clientController = null, companyController = nu
 
     app.get("/api/v1/users/:id", isAuthenticated, async (req: Req, res: Response) => {
         try {
-            const result = await userController.getUser(req.params.id)
+            const result = await userController.getUser(req.params.id, req.user)
             res.send(result)            
         } catch (e) {
             res.status(400).send({ message: e.message })            
@@ -55,8 +55,9 @@ function makeApp(userController, clientController = null, companyController = nu
             res.status(400).send({ message: e.message })            
         }
     })
+// -----------------------------
 
-    app.post("/api/v1/auth/login", async (req: Request, res: Response) => {
+    app.post("/api/v1/users-login", async (req: Request, res: Response) => {
         try {
             const result = await userController.userLogin(req.body)
             res.send(result)            
@@ -69,7 +70,7 @@ function makeApp(userController, clientController = null, companyController = nu
 
     app.get("/api/v1/client/:id", isAuthenticated, async (req: Req, res: Response) => {
         try {
-            const result = await clientController.getClient(req.params.id)
+            const result = await clientController.getClient(req.params.id, req.user)
             res.send(result)            
         } catch (e) {
             res.status(400).send({ message: e.message })            
@@ -105,7 +106,6 @@ function makeApp(userController, clientController = null, companyController = nu
 
     app.delete("/api/v1/client", isAuthenticated, async (req: Req, res: Response) => {
         try {
-            console.log("del")
             const result = await clientController.deleteClient(req.body)
             res.send(result)
         } catch (e) {
@@ -161,7 +161,7 @@ function makeApp(userController, clientController = null, companyController = nu
 // -----------------------------
     app.get("/api/v1/payment-methods/:id", isAuthenticated, async (req: Req, res: Response) => {
         try {
-            const result = await paymentMethodController.getPaymentMethod(req.params.id)
+            const result = await paymentMethodController.getPaymentMethod(req.params.id, req.user)
             res.send(result)            
         } catch (e) {
             res.status(400).send({ message: e.message })            
@@ -208,7 +208,7 @@ function makeApp(userController, clientController = null, companyController = nu
 
     app.get("/api/v1/category/:id", isAuthenticated, async (req: Req, res: Response) => {
         try {
-            const result = await categoryController.getCategory(req.params.id)
+            const result = await categoryController.getCategory(req.params.id, req.user)
             res.send(result)            
         } catch (e) {
             res.status(400).send({ message: e.message })            
@@ -254,7 +254,7 @@ function makeApp(userController, clientController = null, companyController = nu
 
     app.get("/api/v1/sku/:id", isAuthenticated, async (req: Req, res: Response) => {
         try {
-            const result = await skuController.getSku(req.params.id)
+            const result = await skuController.getSku(req.params.id, req.user)
             res.send(result)            
         } catch (e) {
             res.status(400).send({ message: e.message })            
@@ -298,6 +298,126 @@ function makeApp(userController, clientController = null, companyController = nu
     })
 // -----------------------------
 
+    app.get("/api/v1/sku-inventory", isAuthenticated, async (req: Req, res: Response) => {
+        try {
+            const result = await skuInventoryController.getSkusInventory(req.user)
+            res.send(result)            
+        } catch (e) {
+            res.status(400).send({ message: e.message })            
+        }
+    })
+
+    app.get("/api/v1/sku-inventory/:id", isAuthenticated, async (req: Req, res: Response) => {
+        try {
+            const result = await skuInventoryController.getSkuInventory(req.params.id, req.user)
+            res.send(result)            
+        } catch (e) {
+            res.status(400).send({ message: e.message })            
+        }
+    })
+
+    app.put("/api/v1/sku-inventory", isAuthenticated, async (req: Req, res: Response) => {
+        try {
+            const result = await skuInventoryController.updateSkuInventory(req.body)
+            res.send(result)            
+        } catch (e) {
+            res.status(400).send({ message: e.message })            
+        }
+    })
+
+// -----------------------------
+
+    app.get("/api/v1/product/:id", isAuthenticated, async (req: Req, res: Response) => {
+        try {
+            const result = await productController.getProduct(req.params.id, req.user)
+            res.send(result)            
+        } catch (e) {
+            res.status(400).send({ message: e.message })            
+        }
+    })
+
+    app.get("/api/v1/product", isAuthenticated, async (req: Req, res: Response) => {
+        try {
+            const result = await productController.getProducts(req.user)
+            res.send(result)
+        } catch (e) {
+            res.status(400).send({ message: e.message })
+        }
+    })
+
+    app.post("/api/v1/product", isAuthenticated, async (req: Req, res: Response) => {
+        try {
+            const result = await productController.saveProduct(req.body, req.user)
+            res.send(result)
+        } catch (e) {
+            res.status(400).send({ message: e.message })
+        }
+    })
+
+    app.put("/api/v1/product", isAuthenticated, async (req: Req, res: Response) => {
+        try {
+            const result = await productController.updateProduct(req.body)
+            res.send(result)
+        } catch (e) {
+            res.status(400).send({ message: e.message })
+        }
+    })
+
+    app.delete("/api/v1/product", isAuthenticated, async (req: Req, res: Response) => {
+        try {
+            const result = await productController.deleteProduct(req.body)
+            res.send(result)
+        } catch (e) {
+            res.status(400).send({ message: e.message })
+        }
+    })
+// -----------------------------
+
+    app.get("/api/v1/order/:id", isAuthenticated, async (req: Req, res: Response) => {
+        try {
+            const result = await orderController.getOrder(req.params.id, req.user)
+            res.send(result)            
+        } catch (e) {
+            res.status(400).send({ message: e.message })            
+        }
+    })
+
+    app.get("/api/v1/order", isAuthenticated, async (req: Req, res: Response) => {
+        try {
+            const result = await orderController.getOrders(req.user)
+            res.send(result)
+        } catch (e) {
+            res.status(400).send({ message: e.message })
+        }
+    })
+
+    app.post("/api/v1/order", isAuthenticated, async (req: Req, res: Response) => {
+        try {
+            const result = await orderController.saveOrder(req.body, req.user)
+            res.send(result)
+        } catch (e) {
+            res.status(400).send({ message: e.message })
+        }
+    })
+
+    app.put("/api/v1/order", isAuthenticated, async (req: Req, res: Response) => {
+        try {
+            const result = await orderController.updateOrder(req.body, req.user)
+            res.send(result)
+        } catch (e) {
+            res.status(400).send({ message: e.message })
+        }
+    })
+
+    app.delete("/api/v1/order", isAuthenticated, async (req: Req, res: Response) => {
+        try {
+            const result = await orderController.deleteOrder(req.body)
+            res.send(result)
+        } catch (e) {
+            res.status(400).send({ message: e.message })
+        }
+    })
+// -----------------------------
 
     return app
 }

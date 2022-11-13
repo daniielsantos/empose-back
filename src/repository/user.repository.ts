@@ -13,13 +13,18 @@ UsersRepository.prototype.getUserByEmail = async function(user: Users):Promise<U
     return this.db.query(query, [user.email])
 }
 
-UsersRepository.prototype.getUser = async function(userId: number):Promise<Users> {
-    const query = `SELECT u.id, u.name, u.email, u.password, u.role, u.created_at, u.updated_at FROM Users u WHERE id = $1`
-    return this.db.query(query, [userId])
+UsersRepository.prototype.getUser = async function(userId: number, companyId: number):Promise<Users> {
+    const query = `SELECT u.id, u.name, u.email, u.password, u.role, u.created_at, u.updated_at 
+    FROM Users u WHERE id = $1
+    AND u.company_id = $2
+    `
+    return this.db.query(query, [userId, companyId])
 }
 
 UsersRepository.prototype.getUsers = async function(companyId: number):Promise<Users[]> {
-    const query = `SELECT u.id, u.name, u.email, u.password, u.role, u.created_at, u.updated_at FROM Users u WHERE company_id = $1`
+    const query = `SELECT u.id, u.name, u.email, u.password, u.role, u.created_at, u.updated_at 
+    FROM Users u 
+    WHERE company_id = $1`
     return this.db.query(query, [companyId])
 }
 

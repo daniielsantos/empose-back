@@ -1,11 +1,10 @@
-import { Request, Response } from "express"
 import { Client } from "../model/client.model"
 import { Company } from "../model/company.model"
 import { clientRepository } from "../repository/client.repository"
 
 
 
-function ClientService(this: any) {
+function ClientService() {
     this.clientRepository = clientRepository
 }
 
@@ -18,9 +17,9 @@ ClientService.prototype.getClients = async function(company: Company) {
     }
 }
 
-ClientService.prototype.getClient = async function(clientId: number) {
+ClientService.prototype.getClient = async function(clientId: number, companyId: number) {
     try {
-        const result = await this.clientRepository.getClient(clientId)
+        const result = await this.clientRepository.getClient(clientId, companyId)
         return result.rows[0]
     } catch(e) {
         throw new Error(e.message)

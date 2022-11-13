@@ -1,5 +1,7 @@
 import { Company } from "./company.model";
+import { Product } from "./product.model";
 import { SkuImage } from "./sku.image.model";
+import { SkuInventory } from "./sku.inventory.model";
 
 export class Sku {
     constructor(
@@ -7,7 +9,10 @@ export class Sku {
       public name?: string,
       public description?: string,
       public active?: boolean,
-      public image?: SkuImage[],
+      public price?: number,
+      public product?: Product,
+      public images?: SkuImage[],
+      public inventory?: SkuInventory,
       public company?: Company,
       public created_at?: Date,
       public updated_at?: Date,

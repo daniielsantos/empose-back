@@ -2,11 +2,16 @@ import "dotenv/config"
 import { EmailOptions } from "../model/email.model"
 import { EmailSender } from "../services/email.service"
 
+jest.mock("handlebars")
+const Handlebars = require("handlebars")
+
 jest.mock("nodemailer")
 const nodemailer = require("nodemailer")
 const sendEmailMock = jest.fn().mockReturnValueOnce('ok')
 const sendEmailTemplateMock = jest.fn().mockReturnValueOnce('ok')
-nodemailer.createTransport.mockReturnValue({ sendMail: sendEmailMock, use:  sendEmailTemplateMock})
+const setTemplateVariableMock = jest.fn().mockReturnValueOnce('ok')
+nodemailer.createTransport.mockReturnValue({ sendMail: sendEmailMock, use:  sendEmailTemplateMock })
+Handlebars.registerHelper.mockReturnValue("setVar")
 
 const emailOptions: EmailOptions = {
     "host": "smtp.gmail.com",
@@ -28,6 +33,8 @@ const makeSut = () => {
 beforeEach(() => {
     sendEmailMock.mockClear()
     nodemailer.createTransport.mockClear()
+    setTemplateVariableMock.mockClear()
+    Handlebars.registerHelper.mockClear()
 })
 
 describe("Nodemailer mail service",() => {
@@ -42,6 +49,7 @@ describe("Nodemailer mail service",() => {
         const sut = makeSut()
         const spyCreateTransport = jest.spyOn(nodemailer, 'createTransport')
         await sut.send(emailOptions)
+     
         expect(spyCreateTransport).toHaveBeenCalledWith({
             host: "smtp.gmail.com",
             port: 587,
@@ -50,6 +58,16 @@ describe("Nodemailer mail service",() => {
                 pass: "emp2&82!03"
             }
         })        
+    });
+
+    test('registerHelper', async () => {
+        const sut = makeSut()
+        const spySetVariables = jest.spyOn(sut, 'setTemplateVariable')
+        // spySetVariables.mockImplementation
+        await sut.send(emailOptions)
+
+        expect(spySetVariables).toHaveBeenCalledWith("Empose", "1233112")         
+        expect(spySetVariables).toBeCalledTimes(1)
     });
 
     test('should return error if email is not sent', async () => {
