@@ -1,7 +1,7 @@
 import { db } from "../services/db.service"
 import format from "pg-format"
 
-function SkuInventoryRepository(this: any){
+function SkuInventoryRepository(){
     this.db = db
 }
 

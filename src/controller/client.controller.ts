@@ -1,10 +1,8 @@
-import { Request, Response } from "express"
 import { Client } from "../model/client.model"
 import { Company } from "../model/company.model"
 import { clientService } from "../services/client.service"
-import { Req } from "../types/request"
 
-function ClientController(this: any) {
+function ClientController() {
     this.clientService = clientService
 }
 ClientController.prototype.getCompany = function(user: any) {
@@ -30,11 +28,15 @@ ClientController.prototype.saveClient = async function(client: Client, user: any
     return this.clientService.saveClient(client)
 }
 
-ClientController.prototype.updateClient = async function(client: Client): Promise<Client> {
+ClientController.prototype.updateClient = async function(client: Client, user: any): Promise<Client> {
+    const company = this.getCompany(user)
+    client.company = company
     return this.clientService.updateClient(client)
 }
 
-ClientController.prototype.deleteClient = async function(client: Client): Promise<Client> {
+ClientController.prototype.deleteClient = async function(client: Client, user: any): Promise<Client> {
+    const company = this.getCompany(user)
+    client.company = company
     return this.clientService.deleteClient(client)
 }
 

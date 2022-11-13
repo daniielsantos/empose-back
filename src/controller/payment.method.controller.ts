@@ -3,7 +3,7 @@ import { Company } from "../model/company.model"
 import { PaymentMethods } from "../model/payment.method.model"
 import { paymentMethodService } from "../services/payment.method.service"
 
-function PaymentMethodController(this: any) {
+function PaymentMethodController() {
     this.paymentMethodService = paymentMethodService
 }
 
@@ -30,11 +30,15 @@ PaymentMethodController.prototype.savePaymentMethod = async function(paymentMeth
     return this.paymentMethodService.savePaymentMethod(paymentMethod)
 }
 
-PaymentMethodController.prototype.updatePaymentMethod = async function(paymentMethod: PaymentMethods) {
+PaymentMethodController.prototype.updatePaymentMethod = async function(paymentMethod: PaymentMethods, user: any) {
+    const company: Company = this.getCompany(user)
+    paymentMethod.company = company
     return this.paymentMethodService.updatePaymentMethod(paymentMethod)
 }
 
-PaymentMethodController.prototype.deletePaymentMethod = async function(paymentMethod: PaymentMethods) {
+PaymentMethodController.prototype.deletePaymentMethod = async function(paymentMethod: PaymentMethods, user: any) {
+    const company = this.getCompany(user)
+    paymentMethod.company = company
     return this.paymentMethodService.deletePaymentMethod(paymentMethod)
 }
 

@@ -2,7 +2,7 @@ import { Pool } from "pg"
 
 
 
-function Db(this: any) {
+function Db() {
     this.pool = new Pool({
         user: process.env.DB_USER,
         host: process.env.DB_HOST,

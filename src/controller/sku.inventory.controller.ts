@@ -2,7 +2,7 @@ import { Company } from "../model/company.model"
 import { SkuInventory } from "../model/sku.inventory.model"
 import { skuInventoryService } from "../services/sku.inventory.service"
 
-function SkuInventoryController(this: any) {
+function SkuInventoryController() {
     this.skuInventoryService = skuInventoryService
 }
 
@@ -23,7 +23,9 @@ SkuInventoryController.prototype.getSkuInventory = async function(skuInventoryId
     return this.skuInventoryService.getSkuInventory(skuInventoryId, company.id)
 }
 
-SkuInventoryController.prototype.updateSkuInventory = async function(skuInventory: SkuInventory) {
+SkuInventoryController.prototype.updateSkuInventory = async function(skuInventory: SkuInventory, user: any) {
+    const company = this.getCompany(user)
+    skuInventory.company = company
     return this.skuInventoryService.updateSkuInventory(skuInventory)
 }
 

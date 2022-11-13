@@ -1,15 +1,16 @@
 require("dotenv").config()
 import makeApp from "./app"
-import { clientController } from "../src/controller/client.controller"
-import { companyController } from "../src/controller/company.controller"
-import { emailSenderController } from "../src/controller/email.controller"
-import { paymentMethodController } from "../src/controller/payment.method.controller"
-import { userController } from "../src/controller/user.controller"
+import { clientController } from "./controller/client.controller"
+import { companyController } from "./controller/company.controller"
+import { paymentMethodController } from "./controller/payment.method.controller"
+import { userController } from "./controller/user.controller"
 import { categoryController } from "./controller/category.controller"
 import { skuController } from "./controller/sku.controller"
 import { skuInventoryController } from "./controller/sku.inventory.controller"
 import { productController } from "./controller/product.controller"
 import { orderController } from "./controller/order.controller"
+import { emailSenderController } from "./controller/email.controller"
+import { uploadsController } from "./controller/uploads.controller"
 
 
 const app = makeApp(
@@ -21,7 +22,9 @@ const app = makeApp(
     skuController, 
     skuInventoryController,
     productController,
-    orderController
+    orderController,
+    emailSenderController,
+    uploadsController
     )
 
 app.listen(3000, () => {

@@ -36,11 +36,15 @@ UserController.prototype.saveUser = async function(user: Users): Promise<Users> 
     return this.userService.saveUser(user)
 }
 
-UserController.prototype.updateUser = async function(user: Users): Promise<Users> {
+UserController.prototype.updateUser = async function(user: Users, usr: any): Promise<Users> {
+    const company = this.getCompany(usr)
+    user.company = company
     return this.userService.updateUser(user)
 }
 
-UserController.prototype.deleteUser = async function(user: Users): Promise<void> {
+UserController.prototype.deleteUser = async function(user: Users, usr: any): Promise<void> {
+    const company = this.getCompany(usr)
+    user.company = company
     return this.userService.deleteUser(user)
 }
 

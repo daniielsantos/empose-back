@@ -6,7 +6,20 @@ import { isAuthenticated } from "./middleware/isAuthenticated"
 const cors = require("cors")
 const express = require("express")
 
-function makeApp(userController = null, clientController = null, companyController = null, paymentMethodController = null, categoryController = null, skuController = null, skuInventoryController = null, productController = null, orderController = null) {
+function makeApp(
+    userController = null, 
+    clientController = null, 
+    companyController = null, 
+    paymentMethodController = null, 
+    categoryController = null, 
+    skuController = null, 
+    skuInventoryController = null, 
+    productController = null, 
+    orderController = null, 
+    emailSenderController = null,
+    uploadsController = null
+    ) {
+
     const app = express()
     app.use(express.json())
     app.use(cors())
@@ -40,7 +53,7 @@ function makeApp(userController = null, clientController = null, companyControll
 
     app.put("/api/v1/users", isAuthenticated, async (req: Req, res: Response) => {
         try {
-            const result = await userController.updateUser(req.body)
+            const result = await userController.updateUser(req.body, req.user)
             res.send(result)            
         } catch (e) {
             res.status(400).send({ message: e.message })            
@@ -49,7 +62,7 @@ function makeApp(userController = null, clientController = null, companyControll
 
     app.delete("/api/v1/users", isAuthenticated, async (req: Req, res: Response) => {
         try {
-            const result = await userController.deleteUser(req.body)
+            const result = await userController.deleteUser(req.body, req.user)
             res.send(result)            
         } catch (e) {
             res.status(400).send({ message: e.message })            
@@ -97,7 +110,7 @@ function makeApp(userController = null, clientController = null, companyControll
 
     app.put("/api/v1/client", isAuthenticated, async (req: Req, res: Response) => {
         try {
-            const result = await clientController.updateClient(req.body)
+            const result = await clientController.updateClient(req.body, req.user)
             res.send(result)
         } catch (e) {
             res.status(400).send({ message: e.message })
@@ -106,7 +119,7 @@ function makeApp(userController = null, clientController = null, companyControll
 
     app.delete("/api/v1/client", isAuthenticated, async (req: Req, res: Response) => {
         try {
-            const result = await clientController.deleteClient(req.body)
+            const result = await clientController.deleteClient(req.body, req.user)
             res.send(result)
         } catch (e) {
             res.status(400).send({ message: e.message })
@@ -132,7 +145,7 @@ function makeApp(userController = null, clientController = null, companyControll
         }
     })
 
-    app.post("/api/v1/company", isAuthenticated, async (req: Req, res: Response) => {
+    app.post("/api/v1/company", async (req: Req, res: Response) => {
         try {
             const result = await companyController.saveCompany(req.body)
             res.send(result)            
@@ -188,7 +201,7 @@ function makeApp(userController = null, clientController = null, companyControll
 
     app.put("/api/v1/payment-methods", isAuthenticated, async (req: Req, res: Response) => {
         try {
-            const result = await paymentMethodController.updatePaymentMethod(req.body)
+            const result = await paymentMethodController.updatePaymentMethod(req.body, req.user)
             res.send(result)            
         } catch (e) {
             res.status(400).send({ message: e.message })            
@@ -197,7 +210,7 @@ function makeApp(userController = null, clientController = null, companyControll
 
     app.delete("/api/v1/payment-methods", isAuthenticated, async (req: Req, res: Response) => {
         try {
-            const result = await paymentMethodController.deletePaymentMethod(req.body)
+            const result = await paymentMethodController.deletePaymentMethod(req.body, req.user)
             res.send(result)            
         } catch (e) {
             res.status(400).send({ message: e.message })            
@@ -235,7 +248,7 @@ function makeApp(userController = null, clientController = null, companyControll
 
     app.put("/api/v1/category", isAuthenticated, async (req: Req, res: Response) => {
         try {
-            const result = await categoryController.updateCategory(req.body)
+            const result = await categoryController.updateCategory(req.body, req.user)
             res.send(result)
         } catch (e) {
             res.status(400).send({ message: e.message })
@@ -244,7 +257,7 @@ function makeApp(userController = null, clientController = null, companyControll
 
     app.delete("/api/v1/category", isAuthenticated, async (req: Req, res: Response) => {
         try {
-            const result = await categoryController.deleteCategory(req.body)
+            const result = await categoryController.deleteCategory(req.body, req.user)
             res.send(result)
         } catch (e) {
             res.status(400).send({ message: e.message })
@@ -281,7 +294,7 @@ function makeApp(userController = null, clientController = null, companyControll
 
     app.put("/api/v1/sku", isAuthenticated, async (req: Req, res: Response) => {
         try {
-            const result = await skuController.updateSku(req.body)
+            const result = await skuController.updateSku(req.body, req.user)
             res.send(result)
         } catch (e) {
             res.status(400).send({ message: e.message })
@@ -290,7 +303,7 @@ function makeApp(userController = null, clientController = null, companyControll
 
     app.delete("/api/v1/sku", isAuthenticated, async (req: Req, res: Response) => {
         try {
-            const result = await skuController.deleteSku(req.body)
+            const result = await skuController.deleteSku(req.body, req.user)
             res.send(result)
         } catch (e) {
             res.status(400).send({ message: e.message })
@@ -318,7 +331,7 @@ function makeApp(userController = null, clientController = null, companyControll
 
     app.put("/api/v1/sku-inventory", isAuthenticated, async (req: Req, res: Response) => {
         try {
-            const result = await skuInventoryController.updateSkuInventory(req.body)
+            const result = await skuInventoryController.updateSkuInventory(req.body, req.user)
             res.send(result)            
         } catch (e) {
             res.status(400).send({ message: e.message })            
@@ -356,7 +369,7 @@ function makeApp(userController = null, clientController = null, companyControll
 
     app.put("/api/v1/product", isAuthenticated, async (req: Req, res: Response) => {
         try {
-            const result = await productController.updateProduct(req.body)
+            const result = await productController.updateProduct(req.body, req.user)
             res.send(result)
         } catch (e) {
             res.status(400).send({ message: e.message })
@@ -365,7 +378,7 @@ function makeApp(userController = null, clientController = null, companyControll
 
     app.delete("/api/v1/product", isAuthenticated, async (req: Req, res: Response) => {
         try {
-            const result = await productController.deleteProduct(req.body)
+            const result = await productController.deleteProduct(req.body, req.user)
             res.send(result)
         } catch (e) {
             res.status(400).send({ message: e.message })
@@ -411,14 +424,78 @@ function makeApp(userController = null, clientController = null, companyControll
 
     app.delete("/api/v1/order", isAuthenticated, async (req: Req, res: Response) => {
         try {
-            const result = await orderController.deleteOrder(req.body)
+            const result = await orderController.deleteOrder(req.body, req.user)
             res.send(result)
         } catch (e) {
             res.status(400).send({ message: e.message })
         }
     })
 // -----------------------------
+    app.get("/api/v1/uploads/:id", isAuthenticated, async (req: Req, res: Response) => {
+        try {
+            const result = await uploadsController.getUpload(req.params.id, req.user)
+            res.send(result)            
+        } catch (e) {
+            res.status(400).send({ message: e.message })            
+        }
+    })
 
+    app.get("/api/v1/uploads", isAuthenticated, async (req: Req, res: Response) => {
+        try {
+            const result = await uploadsController.getUploads(req.user)
+            res.send(result)
+        } catch (e) {
+            res.status(400).send({ message: e.message })
+        }
+    })
+
+    app.post("/api/v1/uploads", isAuthenticated, async (req: Req, res: Response) => {
+        try {
+            const result = await uploadsController.saveUpload(req.body, req.user)
+            res.send(result)            
+        } catch (e) {
+            res.status(400).send({ message: e.message })            
+        }
+    })
+
+    app.put("/api/v1/uploads", isAuthenticated, async (req: Req, res: Response) => {
+        try {
+            const result = await uploadsController.updateUpload(req.body, req.user)
+            res.send(result)            
+        } catch (e) {
+            res.status(400).send({ message: e.message })            
+        }
+    })
+
+    app.delete("/api/v1/uploads", isAuthenticated, async (req: Req, res: Response) => {
+        try {
+            const result = await uploadsController.deleteUpload(req.body, req.user)
+            res.send(result)            
+        } catch (e) {
+            res.status(400).send({ message: e.message })            
+        }
+    })
+
+
+// -----------------------------
+
+    app.post("/api/v1/email-sender", isAuthenticated, async (req: Req, res: Response) => {
+        try {
+            let result = await emailSenderController.send(req.body)
+            res.send(result)
+        } catch (e) {
+            res.status(400).send({ message: e.message })
+        }
+    })
+// -----------------------------
+    app.post("/api/v1/fileUpload", isAuthenticated, async (req: Req, res: Response) => {
+        try {
+            let result = await emailSenderController.send(req.body)
+            res.send(result)
+        } catch (e) {
+            res.status(400).send({ message: e.message })
+        }
+    })
     return app
 }
 

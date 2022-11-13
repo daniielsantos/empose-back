@@ -2,7 +2,7 @@ import { Company } from "../model/company.model"
 import { Sku } from "../model/sku.model"
 import { skuService } from "../services/sku.service"
 
-function SkuController(this: any) {
+function SkuController() {
     this.skuService = skuService
 }
 SkuController.prototype.getCompany = function(user: any) {
@@ -28,11 +28,15 @@ SkuController.prototype.saveSku = async function(sku: Sku, user: any): Promise<S
     return this.skuService.saveSku(sku)
 }
 
-SkuController.prototype.updateSku = async function(sku: Sku): Promise<Sku> {
+SkuController.prototype.updateSku = async function(sku: Sku, user: any): Promise<Sku> {
+    const company = this.getCompany(user)
+    sku.company = company
     return this.skuService.updateSku(sku)
 }
 
-SkuController.prototype.deleteSku = async function(sku: Sku): Promise<Sku> {
+SkuController.prototype.deleteSku = async function(sku: Sku, user: any): Promise<Sku> {
+    const company = this.getCompany(user)
+    sku.company = company
     return this.skuService.deleteSku(sku)
 }
 

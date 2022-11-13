@@ -98,6 +98,4 @@ describe('/api/v1/users-login', () => {
         expect(res.status).toBe(500)
         expect(res.body).toMatchObject({message: "Error: Failed to authenticate token"})
     });
-
-
 });

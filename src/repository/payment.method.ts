@@ -2,7 +2,7 @@ import { db } from "../services/db.service"
 import format from "pg-format"
 import { PaymentMethods } from "../model/payment.method.model"
 
-function PaymentMethod(this: any){
+function PaymentMethod(){
     this.db = db
 }
 

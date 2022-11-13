@@ -2,7 +2,7 @@ import { Company } from "../model/company.model"
 import { Product } from "../model/product.model"
 import { productService } from "../services/product.service"
 
-function ProductController(this: any) {
+function ProductController() {
     this.productService = productService
 }
 ProductController.prototype.getCompany = function(user: any) {
@@ -28,11 +28,15 @@ ProductController.prototype.saveProduct = async function(product: Product, user:
     return this.productService.saveProduct(product)
 }
 
-ProductController.prototype.updateProduct = async function(product: Product): Promise<Product> {
+ProductController.prototype.updateProduct = async function(product: Product, user: any): Promise<Product> {
+    const company = this.getCompany(user)
+    product.company = company
     return this.productService.updateProduct(product)
 }
 
-ProductController.prototype.deleteProduct = async function(product: Product): Promise<Product> {
+ProductController.prototype.deleteProduct = async function(product: Product, user: any): Promise<Product> {
+    const company = this.getCompany(user)
+    product.company = company
     return this.productService.deleteProduct(product)
 }
 

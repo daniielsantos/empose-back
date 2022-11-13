@@ -5,7 +5,7 @@ import * as jwt from "jsonwebtoken"
 import { Company } from "../model/company.model"
 import { companyService } from "./company.service"
 
-function UserService(this: any) {
+function UserService() {
     this.userRepository = userRepository
     this.companyService = companyService
     this.bcrypt = crypt
@@ -83,7 +83,7 @@ UserService.prototype.saveUser = async function(user: Users) {
 UserService.prototype.updateUser = async function(user: Users) {
     try {
         user.updated_at = new Date
-        let usr = await this.getUser(user.id)
+        let usr = await this.getUser(user.id, user.company.id)
         if(!usr)
             throw new Error("usuario nao encontrado")
         const result = await this.userRepository.updateUser(user)
@@ -95,7 +95,7 @@ UserService.prototype.updateUser = async function(user: Users) {
 
 UserService.prototype.deleteUser = async function(user: Users) {
     try {
-        let usr = await this.getUser(user.id)
+        let usr = await this.getUser(user.id, user.company.id)
         if(!usr)
             throw new Error("usuario nao encontrado")
         await this.userRepository.deleteUser(user)

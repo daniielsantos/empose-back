@@ -6,7 +6,7 @@ import { productService } from "./product.service"
 
 
 
-function SkuService(this: any) {
+function SkuService() {
     this.skuRepository = skuRepository
     this.productService = productService
 }
@@ -44,7 +44,7 @@ SkuService.prototype.saveSku = async function(sku: Sku) {
 
 SkuService.prototype.updateSku = async function(sku: Sku) {
     try {
-        let pay = await this.getSku(sku.id)
+        let pay = await this.getSku(sku.id, sku.company.id)
         if(!pay)
             throw new Error("sku nao encontrado")
         sku.updated_at = new Date
@@ -57,7 +57,7 @@ SkuService.prototype.updateSku = async function(sku: Sku) {
 
 SkuService.prototype.deleteSku = async function(sku: Sku) {
     try {
-        let pay = await this.getSku(sku.id)
+        let pay = await this.getSku(sku.id, sku.company.id)
         if(!pay)
             throw new Error("sku nao encontrado")
         await this.skuRepository.deleteSku(sku)

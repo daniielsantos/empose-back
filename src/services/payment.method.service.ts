@@ -36,7 +36,7 @@ PaymentMethodService.prototype.savePaymentMethod = async function(paymentMethod:
 
 PaymentMethodService.prototype.updatePaymentMethod = async function(paymentMethod: PaymentMethods) {
     try {
-        let pay = await this.getPaymentMethod(paymentMethod.id)
+        let pay = await this.getPaymentMethod(paymentMethod.id, paymentMethod.company.id)
         if(!pay)
             throw new Error("metodo de pagamento nao encontrado")
         paymentMethod.updated_at = new Date
@@ -49,7 +49,7 @@ PaymentMethodService.prototype.updatePaymentMethod = async function(paymentMetho
 
 PaymentMethodService.prototype.deletePaymentMethod = async function(paymentMethod: PaymentMethods) {
     try {
-        let pay = await this.getPaymentMethod(paymentMethod.id)
+        let pay = await this.getPaymentMethod(paymentMethod.id, paymentMethod.company.id)
         if(!pay)
             throw new Error("metodo de pagamento nao encontrado")
         await this.paymentMethod.deletePaymentMethod(paymentMethod)

@@ -84,7 +84,7 @@ OrderService.prototype.updateOrder = async function(order: Orders) {
 
 OrderService.prototype.deleteOrder = async function(order: Orders) {
     try {
-        let pay = await this.getOrder(order.id)
+        let pay = await this.getOrder(order.id, order.company.id)
         if(!pay)
             throw new Error("pedido nao encontrado")
         await this.orderRepository.deleteOrder(order)

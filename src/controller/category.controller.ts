@@ -3,7 +3,7 @@ import { Client } from "../model/client.model"
 import { Company } from "../model/company.model"
 import { categoryService } from "../services/category.service"
 
-function CategoryController(this: any) {
+function CategoryController() {
     this.categoryService = categoryService
 }
 CategoryController.prototype.getCompany = function(user: any): Company {
@@ -29,11 +29,15 @@ CategoryController.prototype.saveCategory = async function(category: Category, u
     return this.categoryService.saveCategory(category)
 }
 
-CategoryController.prototype.updateCategory = async function(category: Category): Promise<Category> {
+CategoryController.prototype.updateCategory = async function(category: Category, user: any): Promise<Category> {
+    const company = this.getCompany(user)
+    category.company = company
     return this.categoryService.updateCategory(category)
 }
 
-CategoryController.prototype.deleteCategory = async function(category: Category): Promise<Category> {
+CategoryController.prototype.deleteCategory = async function(category: Category, user: any): Promise<Category> {
+    const company = this.getCompany(user)
+    category.company = company
     return this.categoryService.deleteCategory(category)
 }
 

@@ -4,7 +4,7 @@ import { categoryRepository } from "../repository/category.repository"
 
 
 
-function CategoryService(this: any) {
+function CategoryService() {
     this.categoryRepository = categoryRepository
 }
 
@@ -38,7 +38,7 @@ CategoryService.prototype.saveCategory = async function(category: Category) {
 
 CategoryService.prototype.updateCategory = async function(category: Category) {
     try {
-        let pay = await this.getCategory(category.id)
+        let pay = await this.getCategory(category.id, category.company.id)
         if(!pay)
             throw new Error("categoria nao encontrado")
         category.updated_at = new Date
@@ -51,7 +51,7 @@ CategoryService.prototype.updateCategory = async function(category: Category) {
 
 CategoryService.prototype.deleteCategory = async function(category: Category) {
     try {
-        let pay = await this.getCategory(category.id)
+        let pay = await this.getCategory(category.id, category.company.id)
         if(!pay)
             throw new Error("categoria nao encontrada")
         await this.categoryRepository.deleteCategory(category)

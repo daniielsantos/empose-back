@@ -1,11 +1,12 @@
 import { Company } from "./company.model";
 
-export class SkuInventory {
+export class Uploads {
     constructor(
       public id?: number,
-      public quantity?: number,
+      public name?: string,
+      public path?: string,
       public company?: Company,
       public created_at?: Date,
-      public updated_at?: Date
+      public updated_at?: Date,
     ) {}
 }

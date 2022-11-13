@@ -150,6 +150,16 @@ Tables.prototype.create = async function() {
     )`
     await this.db.query(query)
 
+    query = `CREATE TABLE IF NOT EXISTS Uploads(
+        id SERIAL PRIMARY KEY,
+        name CHARACTER VARYING(150),
+        path CHARACTER VARYING(500),
+        company_id INT NOT NULL REFERENCES Company(id) ON DELETE CASCADE,
+        created_at TIMESTAMP,
+        updated_at TIMESTAMP
+    )`
+    await this.db.query(query)
+
     
 }
 

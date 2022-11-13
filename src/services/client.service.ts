@@ -38,7 +38,7 @@ ClientService.prototype.saveClient = async function(client: Client) {
 
 ClientService.prototype.updateClient = async function(client: Client) {
     try {
-        let pay = await this.getClient(client.id)
+        let pay = await this.getClient(client.id, client.company.id)
         if(!pay)
             throw new Error("cliente nao encontrado")
         client.updated_at = new Date
@@ -51,7 +51,7 @@ ClientService.prototype.updateClient = async function(client: Client) {
 
 ClientService.prototype.deleteClient = async function(client: Client) {
     try {
-        let pay = await this.getClient(client.id)
+        let pay = await this.getClient(client.id, client.company.id)
         if(!pay)
             throw new Error("cliente nao encontrado")
         await this.clientRepository.deleteClient(client)

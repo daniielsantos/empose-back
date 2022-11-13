@@ -35,7 +35,9 @@ OrderController.prototype.updateOrder = async function(order: Orders, user: any)
     return this.orderService.updateOrder(order)
 }
 
-OrderController.prototype.deleteOrder = async function(order: Orders): Promise<Orders> {
+OrderController.prototype.deleteOrder = async function(order: Orders, user: any): Promise<Orders> {
+    const company = this.getCompany(user)
+    order.company = company
     return this.orderService.deleteOrder(order)
 }
 

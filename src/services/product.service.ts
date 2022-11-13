@@ -7,7 +7,7 @@ import { categoryService } from "./category.service"
 
 
 
-function ProductService(this: any) {
+function ProductService() {
     this.productRepository = productRepository
     this.categoryService = categoryService
 }
@@ -46,7 +46,7 @@ ProductService.prototype.saveProduct = async function(product: Product) {
 
 ProductService.prototype.updateProduct = async function(product: Product) {
     try {
-        let pay = await this.getProduct(product.id)
+        let pay = await this.getProduct(product.id, product.company.id)
         if(!pay)
             throw new Error("produto nao encontrado")
         product.updated_at = new Date
@@ -57,12 +57,12 @@ ProductService.prototype.updateProduct = async function(product: Product) {
     }
 }
 
-ProductService.prototype.deleteProduct = async function(client: Client) {
+ProductService.prototype.deleteProduct = async function(product: Product) {
     try {
-        let pay = await this.getProduct(client.id)
+        let pay = await this.getProduct(product.id, product.company.id)
         if(!pay)
             throw new Error("produto nao encontrado")
-        await this.productRepository.deleteProduct(client)
+        await this.productRepository.deleteProduct(product)
         return { message: "produto deletado" }
     } catch(e) {
         throw new Error(e.message)
