@@ -1,8 +1,8 @@
 import { EmailOptions } from "../model/email.model"
-import { EmailSender } from "../services/email.service"
+import { emailSender } from "../services/email.service"
 
 function EmailSenderController() {
-    this.emailService = new EmailSender
+    this.emailService = emailSender
 }
 
 EmailSenderController.prototype.send = async function(body: EmailOptions) {

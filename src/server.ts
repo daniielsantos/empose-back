@@ -11,6 +11,7 @@ import { productController } from "./controller/product.controller"
 import { orderController } from "./controller/order.controller"
 import { emailSenderController } from "./controller/email.controller"
 import { uploadsController } from "./controller/uploads.controller"
+import { uploadFileController } from "./controller/upload.file.controller"
 
 
 const app = makeApp(
@@ -24,7 +25,8 @@ const app = makeApp(
     productController,
     orderController,
     emailSenderController,
-    uploadsController
+    uploadsController,
+    uploadFileController
     )
 
 app.listen(3000, () => {

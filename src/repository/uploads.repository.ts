@@ -37,7 +37,6 @@ UploadsRepository.prototype.saveUpload = async function(uploads: Uploads) {
         company_id: uploads.company.id,
         created_at: uploads.created_at
     }
-    console.log(payload)
     const query = format(`INSERT INTO uploads("name", "path", "company_id", "created_at") VALUES (%L) RETURNING *`, Object.values(payload)) 
     return this.db.query(query)
 }

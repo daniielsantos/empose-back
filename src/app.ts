@@ -1,5 +1,6 @@
 require("dotenv").config()
 import "./model/tables.model"
+import formidable from "formidable"
 import { Response } from "express"
 import { Req } from "./types/request"
 import { isAuthenticated } from "./middleware/isAuthenticated"
@@ -17,12 +18,14 @@ function makeApp(
     productController = null, 
     orderController = null, 
     emailSenderController = null,
-    uploadsController = null
+    uploadsController = null,
+    uploadFileController = null
     ) {
 
     const app = express()
     app.use(express.json())
     app.use(cors())
+    app.use('/uploads', express.static(__dirname + '/uploads'))
 
     app.get("/api/v1/users", isAuthenticated, async (req: Req, res: Response) => {
         try {
@@ -490,8 +493,7 @@ function makeApp(
 // -----------------------------
     app.post("/api/v1/fileUpload", isAuthenticated, async (req: Req, res: Response) => {
         try {
-            let result = await emailSenderController.send(req.body)
-            res.send(result)
+            await uploadFileController.uploadFile(req, res)
         } catch (e) {
             res.status(400).send({ message: e.message })
         }

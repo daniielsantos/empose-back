@@ -1,6 +1,6 @@
 import "dotenv/config"
 import { EmailOptions } from "../model/email.model"
-import { EmailSender } from "../services/email.service"
+import { emailSender } from "../services/email.service"
 import "dotenv/config"
 import request from "supertest"
 import makeApp from "../app"
@@ -33,7 +33,7 @@ const emailOptions: EmailOptions = {
     ]
 }
 const makeSut = () => {
-    return new EmailSender
+    return emailSender
 }
 
 beforeEach(() => {

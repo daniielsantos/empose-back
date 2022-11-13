@@ -61,5 +61,5 @@ EmailSender.prototype.setTemplateVariable = function(name: string, password: str
         }
     });
 }
-
-export { EmailSender }
+const emailSender = new (EmailSender as any)
+export { emailSender }
