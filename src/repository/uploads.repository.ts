@@ -48,7 +48,6 @@ UploadsRepository.prototype.updateUpload = async function(uploads: Uploads) {
         path: uploads.path,
         updated_at: uploads.updated_at,
     }
-    console.log("entrou ", payload)
     const query = `UPDATE uploads SET "name" = $2, "path" = $3, "updated_at" = $4 WHERE id = $1 RETURNING *`
     return this.db.query(query, Object.values(payload))
 }

@@ -1,6 +1,8 @@
 import { Company } from "../model/company.model"
 import { Uploads } from "../model/uploads.model"
 import { uploadsRepository } from "../repository/uploads.repository"
+import fs from "fs"
+import path from "path"
 
 function UploadsService() {
     this.uploadsRepository = uploadsRepository
@@ -37,9 +39,17 @@ UploadsService.prototype.saveUpload = async function(uploads: Uploads) {
 UploadsService.prototype.updateUpload = async function(uploads: Uploads) {
     try {
         let upl = await this.getUpload(uploads.id, uploads.company.id)
+        const oldPath = path.resolve('./src/uploads/'+upl.name)
+        const newPath = path.resolve('./src/uploads/'+uploads.name)
+        if(uploads.name != upl.name) {
+            fs.rename(oldPath, newPath, () => {
+                console.log("arquivo renomeado")
+            })
+        }
         if(!upl)
             throw new Error("upload nao encontrado")
-            uploads.updated_at = new Date
+        uploads.updated_at = new Date
+        uploads.path = 'uploads/' + uploads.name
         const result = await this.uploadsRepository.updateUpload(uploads)
         return result.rows[0]
     } catch(e) {
@@ -53,7 +63,11 @@ UploadsService.prototype.deleteUpload = async function(uploads: Uploads) {
         if(!upl)
             throw new Error("upload nao encontrado")
         await this.uploadsRepository.deleteUpload(uploads)
-        return {message: "upload deletado"}
+        const filePath = path.resolve('./src/uploads/'+uploads.name)
+        fs.unlink(filePath, (err) => {
+            if(err) console.error("arquivo ja deletado")
+        })
+        return {message: "arquivo upload deletado"}
     } catch(e) {
         throw new Error(e.message)
     }

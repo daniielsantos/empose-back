@@ -1,6 +1,5 @@
 require("dotenv").config()
 import "./model/tables.model"
-import formidable from "formidable"
 import { Response } from "express"
 import { Req } from "./types/request"
 import { isAuthenticated } from "./middleware/isAuthenticated"
@@ -502,23 +501,3 @@ function makeApp(
 }
 
 export = makeApp
-
-// const app = express()
-// app.use(express.json())
-// app.use(cors())
-// app.use("/api/v1/", companyRoute(companyController))
-// app.use("/api/v1/", clientRoute(clientController))
-// app.use("/api/v1/", emailSenderRoute(emailSenderController))
-// app.use("/api/v1/", usersRoute.userRouter(userController))
-// app.use("/api/v1/", paymentMethodRoute(paymentMethodController))
-
-
-// export = app
-
-
-
-
-
-
-// fazer uploade de arquivos no front e back
-// export = app

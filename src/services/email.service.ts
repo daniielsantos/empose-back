@@ -45,7 +45,7 @@ EmailSender.prototype.send = async function(options: EmailOptions) {
         await transporter.sendMail(sendOptions)
         return { message: "email sent" }
     } catch (e) {
-        throw new Error("falha ao enviar email")
+        throw new Error("falha ao enviar email"+ e.message)
     }
 }
 

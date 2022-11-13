@@ -39,7 +39,7 @@
     "start": "npx nodemon src/server.ts",
     "test": "npx jest",
     "exec": "ts-node --files ./src/app.ts",
-    "production": "node ./dist/server.js"
+    "production": "tsc && node ./dist/server.js"
   },
   "repository": {
     "type": "git",

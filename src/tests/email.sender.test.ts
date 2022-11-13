@@ -1,7 +1,6 @@
 import "dotenv/config"
 import { EmailOptions } from "../model/email.model"
 import { emailSender } from "../services/email.service"
-import "dotenv/config"
 import request from "supertest"
 import makeApp from "../app"
 import jwt from "jsonwebtoken"
