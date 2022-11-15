@@ -18,15 +18,14 @@ EmailSender.prototype.send = async function(options: EmailOptions) {
                 pass: options.password
             }
         })
-
-        this.setTemplateVariable(options.text, "1233112")
+        this.setTemplateVariable(options.params.name, options.params.password, options.text)
      
         transporter.use('compile', hbs({
             viewEngine: {
                 extname: '.handlebars',
                 partialsDir: path.resolve('./src/views/'),
                 layoutsDir: path.resolve('./src/views/'),
-                defaultLayout: 'password_recover'
+                defaultLayout: options.template
             },
             viewPath: path.resolve('./src/views/'),
             extName: '.handlebars'
@@ -39,7 +38,7 @@ EmailSender.prototype.send = async function(options: EmailOptions) {
             text: options.text,
             html: options.html,
             attachments: options.attachments,
-            template: 'password_recover'
+            template: options.template //'password_recover' || 'default'
         }
         
         await transporter.sendMail(sendOptions)
@@ -49,7 +48,7 @@ EmailSender.prototype.send = async function(options: EmailOptions) {
     }
 }
 
-EmailSender.prototype.setTemplateVariable = function(name: string, password: string) {
+EmailSender.prototype.setTemplateVariable = function(name: string = null, password: string = null, body: string = null) {
     Handlebars.registerHelper("setVar", function(varName, varValue, opt) {
         switch (varName) {
             case 'name': {
@@ -57,6 +56,9 @@ EmailSender.prototype.setTemplateVariable = function(name: string, password: str
             } break
             case 'password': {
                 opt.data.root[varName] = password;
+            } break
+            case 'body': {
+                opt.data.root[varName] = body;
             } break
         }
     });

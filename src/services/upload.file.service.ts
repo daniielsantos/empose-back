@@ -24,7 +24,7 @@ UploadFileService.prototype.saveFile = async function(company: Company, fileName
         path: filePath,
         company: company,
     }
-    await this.uploadsService.saveUpload(uploadFile)
+    return this.uploadsService.saveUpload(uploadFile)
 }
 
 UploadFileService.prototype.uploadFile = async function(req: Req, res: Response) {
@@ -36,8 +36,8 @@ UploadFileService.prototype.uploadFile = async function(req: Req, res: Response)
 
         await new Promise((resolve, reject) => {
             form.parse(req, function (err, fields, files) {
-                const oldpath = files.fileUpload.filepath;
-                fileName = files.fileUpload.originalFilename
+                const oldpath = files.file.filepath;
+                fileName = files.file.originalFilename
                 filePath = 'uploads/' + fileName
                 const newpath = uploadPath + fileName
                 if (err) reject('error');
@@ -48,9 +48,8 @@ UploadFileService.prototype.uploadFile = async function(req: Req, res: Response)
             })
         })
 
-        await this.saveFile(company, fileName, filePath)
-        res.write('File uploaded and moved!');
-        res.end();
+        let fileSaved = await this.saveFile(company, fileName, filePath)
+        res.send(fileSaved)
     } catch (e) {
         throw new Error("falha ao fazer upload "+e.message)
     }

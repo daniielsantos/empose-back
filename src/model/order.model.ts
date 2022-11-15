@@ -1,14 +1,8 @@
-import { Category } from "./category.model";
 import { Client } from "./client.model";
 import { Company } from "./company.model";
 import { PaymentMethods } from "./payment.method.model";
 import { Sku } from "./sku.model";
 
-export const OrderStatus = {
-  AguardandoPagamento: 0,
-  Pago: 1,
-  Cancelada: 2
-}
 
 export class OrderItem {
     constructor(

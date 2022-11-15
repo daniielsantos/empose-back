@@ -5,6 +5,9 @@ import { Req } from "./types/request"
 import { isAuthenticated } from "./middleware/isAuthenticated"
 const cors = require("cors")
 const express = require("express")
+const app = express()
+app.use(express.json())
+app.use(cors())
 
 function makeApp(
     userController = null, 
@@ -21,9 +24,7 @@ function makeApp(
     uploadFileController = null
     ) {
 
-    const app = express()
-    app.use(express.json())
-    app.use(cors())
+
     app.use('/uploads', express.static(__dirname + '/uploads'))
 
     app.get("/api/v1/users", isAuthenticated, async (req: Req, res: Response) => {
@@ -492,6 +493,7 @@ function makeApp(
 // -----------------------------
     app.post("/api/v1/fileUpload", isAuthenticated, async (req: Req, res: Response) => {
         try {
+            console.log("bateuuuuu ")
             await uploadFileController.uploadFile(req, res)
         } catch (e) {
             res.status(400).send({ message: e.message })
