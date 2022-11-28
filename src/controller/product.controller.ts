@@ -30,7 +30,7 @@ ProductController.prototype.saveProduct = async function(product: Product, user:
 
 ProductController.prototype.updateProduct = async function(product: Product, user: any): Promise<Product> {
     const company = this.getCompany(user)
-    product.company = company
+    product.company = company    
     return this.productService.updateProduct(product)
 }
 

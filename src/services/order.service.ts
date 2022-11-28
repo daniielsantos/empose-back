@@ -70,10 +70,12 @@ OrderService.prototype.saveOrder = async function(order: Orders) {
 
 OrderService.prototype.updateOrder = async function(order: Orders) {
     try {
-        order.updated_at = new Date
+        order.updated_at = new Date        
         let pay = await this.getOrder(order.id, order.company.id)
+        
         if(!pay)
             throw new Error("pedido nao encontrado")
+        
         await this.getErros(order)
         const result = await this.orderRepository.updateOrder(order)
         return result

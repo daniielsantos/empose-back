@@ -128,7 +128,7 @@ Tables.prototype.create = async function() {
     
     query = `CREATE TABLE IF NOT EXISTS Orders(
         id SERIAL PRIMARY KEY,
-        total NUMERIC(7, 2),
+        total NUMERIC(9, 2),
         status CHARACTER VARYING(50),
         delivery_status CHARACTER VARYING(50),
         payment_method_id INT REFERENCES Payment_method(id) ON DELETE CASCADE,
@@ -159,7 +159,6 @@ Tables.prototype.create = async function() {
         updated_at TIMESTAMP
     )`
     await this.db.query(query)
-
     
 }
 

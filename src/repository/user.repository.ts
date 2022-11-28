@@ -9,7 +9,25 @@ function UsersRepository(){
 }
 
 UsersRepository.prototype.getUserByEmail = async function(user: Users):Promise<Users> {
-    const query = `SELECT u.id, u.name, u.email, u.password, u.role, u.company_id, u.created_at, u.updated_at FROM Users u WHERE email = $1`
+    const query = `SELECT u.id, u.name, u.email, u.password, u.role, u.created_at, u.updated_at,
+    json_strip_nulls(json_build_object('id', c.id, 'name', c.name, 'email', c.email, 'cnpj', c.cnpj, 'address', c.address)) AS company
+    FROM Users u 
+    LEFT JOIN company c ON c.id = u.company_id
+    WHERE u.email = $1
+    GROUP BY 
+    u.id,
+    u.email,
+    u.password,
+    u.role,
+    u.created_at,
+    u.updated_at,
+    c.id,
+    c.name,
+    c.email,
+    c.cnpj,
+    c.address
+    `
+    
     return this.db.query(query, [user.email])
 }
 
@@ -45,10 +63,10 @@ UsersRepository.prototype.saveUser = async function(user: Users): Promise<Users>
 }
 
 UsersRepository.prototype.updateUser = async function(user: Users) {
-    let res = await this.getUser(user.id)
+    let res = await this.getUser(user.id, user.company.id)
     let usr: Users = res.rows[0]
     delete usr.created_at
-    usr.updated_at = user.updated_at
+    usr.updated_at = user.updated_at || new Date
     if(user.name != usr.name)
         usr.name = user.name
     if(user.email != usr.email)
@@ -57,7 +75,6 @@ UsersRepository.prototype.updateUser = async function(user: Users) {
         usr.password = await this.bcrypt.hash(user.password)         
     if(user.role != usr.role)
         usr.role = user.role
-
     const query = `UPDATE users SET "name" = $2, "email" = $3, "password" = $4, "role" = $5, "updated_at" = $6 WHERE id = $1 RETURNING *`
     const pay = await this.db.query(query, Object.values(usr))
     return pay

@@ -47,7 +47,25 @@ function makeApp(
 
     app.post("/api/v1/users", isAuthenticated, async (req: Req, res: Response) => {
         try {
-            const result = await userController.saveUser(req.body)
+            const result = await userController.saveUser(req.body, req.user)
+            res.send(result)            
+        } catch (e) {
+            res.status(400).send({ message: e.message })            
+        }
+    })
+
+    app.post("/api/v1/register", async (req: Req, res: Response) => {
+        try {
+            const result = await userController.saveRegister(req.body)
+            res.send(result)            
+        } catch (e) {
+            res.status(400).send({ message: e.message })            
+        }
+    })
+    
+    app.post("/api/v1/recovery", async (req: Req, res: Response) => {
+        try {
+            const result = await userController.accountRecovery(req.body)
             res.send(result)            
         } catch (e) {
             res.status(400).send({ message: e.message })            
@@ -399,7 +417,7 @@ function makeApp(
     })
 
     app.get("/api/v1/order", isAuthenticated, async (req: Req, res: Response) => {
-        try {
+        try {            
             const result = await orderController.getOrders(req.user)
             res.send(result)
         } catch (e) {
@@ -493,7 +511,6 @@ function makeApp(
 // -----------------------------
     app.post("/api/v1/fileUpload", isAuthenticated, async (req: Req, res: Response) => {
         try {
-            console.log("bateuuuuu ")
             await uploadFileController.uploadFile(req, res)
         } catch (e) {
             res.status(400).send({ message: e.message })

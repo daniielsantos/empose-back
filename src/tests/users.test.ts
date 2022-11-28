@@ -4,9 +4,11 @@ import makeApp from "../app"
 import jwt from "jsonwebtoken"
 
 
+
 jest.setTimeout(10000)
 
 const saveUser = jest.fn()
+const saveRegister = jest.fn()
 const getUsers = jest.fn()
 const getUser = jest.fn()
 const updateUser = jest.fn()
@@ -17,7 +19,8 @@ const app = makeApp({
     saveUser,
     getUser,
     updateUser,
-    deleteUser
+    deleteUser,
+    saveRegister
 },{
 
 })
@@ -31,7 +34,7 @@ describe('/api/v1/users', () => {
         updateUser.mockReset()
         deleteUser.mockReset()
     });
-    let user, payload, userResponse
+    let user, payload, userResponse, userRegister
     let token = 'bearer '
     user = {
         name: "teste",
@@ -40,6 +43,17 @@ describe('/api/v1/users', () => {
         role: "admin",
         company: {
             id: 1
+        }
+    }
+    userRegister = {
+        name: "teste",
+        email: "teste@teste.com",
+        password: "teste",
+        company: {
+            id: 1,
+            name: 'teste',
+            address: 'rua reste',
+            cnpj: '22222222222222',
         }
     }
     userResponse = {
@@ -71,6 +85,20 @@ describe('/api/v1/users', () => {
         expect(saveUser.mock.calls.length).toBe(1)
         expect(saveUser.mock.calls[0][0]).toMatchObject(user)
         expect(res.body).toMatchObject(user)
+    });
+
+    it('should save user register on database and return the user', async () => {
+        expect(token)
+        saveRegister.mockResolvedValue(userRegister)
+        let res = await request(app)
+            .post('/api/v1/register')
+            // .set('authorization', token)
+            .send(userRegister)
+
+        expect(res.status).toBe(200)
+        expect(saveRegister.mock.calls.length).toBe(1)
+        expect(saveRegister.mock.calls[0][0]).toMatchObject(userRegister)
+        expect(res.body).toMatchObject(userRegister)
     });
 
     it('should return error', async () => {

@@ -44,10 +44,11 @@ SkuService.prototype.saveSku = async function(sku: Sku) {
 
 SkuService.prototype.updateSku = async function(sku: Sku) {
     try {
-        let pay = await this.getSku(sku.id, sku.company.id)
-        if(!pay)
+        let sk = await this.getSku(sku.id, sku.company.id)
+        if(!sk)
             throw new Error("sku nao encontrado")
         sku.updated_at = new Date
+        sku.product = sk.product        
         const result = await this.skuRepository.updateSku(sku)
         return result
     } catch(e) {

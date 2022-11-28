@@ -19,16 +19,25 @@ nodemailer.createTransport.mockReturnValue({ sendMail: sendEmailMock, use:  send
 Handlebars.registerHelper.mockReturnValue("setVar")
 
 const emailOptions: EmailOptions = {
-    "host": "smtp.gmail.com",
-    "port": 587,
-    "username": "empose@gmail.com",
-    "password": "emp2&82!03",
-    "from": "empose@gmail.com",
-    "to": "empose@gmail.com",
-    "subject": "Empose Recuperação de Senha",
-    "text": "Empose",
-    "html": "",
-    "attachments": [
+    host: "smtp.gmail.com",
+    port: 587,
+    username: "teste@gmail.com",
+    password: "teste",
+    from: "teste@gmail.com",
+    to: "teste@gmail.com",
+    template: "default",
+    params: {
+        name: 'daniel',
+        password: 'test'
+    },
+    subject: "Empose Recuperação de Senha",
+    text: "Daniel Santos",
+    html: "",
+    attachments: [
+        {
+            filename: "image_test.jpg",
+            path: "./src/attachments/image_test.jpg"
+        }
     ]
 }
 const makeSut = () => {
@@ -59,8 +68,8 @@ describe("Nodemailer mail service",() => {
             host: "smtp.gmail.com",
             port: 587,
             auth: {
-                user: "empose@gmail.com",
-                pass: "emp2&82!03"
+                user: "teste@gmail.com",
+                pass: "teste"
             }
         })        
     });
@@ -71,17 +80,17 @@ describe("Nodemailer mail service",() => {
         // spySetVariables.mockImplementation
         await sut.send(emailOptions)
 
-        expect(spySetVariables).toHaveBeenCalledWith("Empose", "1233112")         
+        expect(spySetVariables).toHaveBeenCalledWith("daniel", "test", "Daniel Santos")         
         expect(spySetVariables).toBeCalledTimes(1)
     });
 
     test('should return error if email is not sent', async () => {
         const sut = makeSut()
         sendEmailMock.mockImplementationOnce(() => {
-            throw new Error()
+            throw new Error('falha ao enviar email')
         })
         sendEmailTemplateMock.mockImplementationOnce(() => {
-            throw new Error()
+            throw new Error('falha ao enviar email')
         })
         try {
             await sut.send(emailOptions)
@@ -114,7 +123,7 @@ describe('/api/v1/email-sender', () => {
     beforeEach(() => {
         send.mockReset()
     });
-    let emailSenderIn, payload, emailSenderResponse
+    let emailSenderIn: EmailOptions, payload, emailSenderResponse
     let token = 'bearer '
     emailSenderIn = {
         host: "smtp.gmail.com",
@@ -123,6 +132,11 @@ describe('/api/v1/email-sender', () => {
         password: "manjmogzlupwopwx",
         from: "daniielsouzapvh@gmail.com",
         to: "daniielsouzapvh@gmail.com",
+        template: "default",
+        params: {
+            name: 'daniel',
+            password: 'test'
+        },
         subject: "Empose Recuperação de Senha",
         text: "Daniel Santos",
         html: "",

@@ -18,8 +18,9 @@ EmailSender.prototype.send = async function(options: EmailOptions) {
                 pass: options.password
             }
         })
+        
         this.setTemplateVariable(options.params.name, options.params.password, options.text)
-     
+
         transporter.use('compile', hbs({
             viewEngine: {
                 extname: '.handlebars',
@@ -44,7 +45,7 @@ EmailSender.prototype.send = async function(options: EmailOptions) {
         await transporter.sendMail(sendOptions)
         return { message: "email sent" }
     } catch (e) {
-        throw new Error("falha ao enviar email"+ e.message)
+        throw new Error("falha ao enviar email "+ e.message)
     }
 }
 

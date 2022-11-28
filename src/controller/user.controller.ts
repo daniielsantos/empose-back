@@ -15,16 +15,6 @@ UserController.prototype.getCompany = function(user: any) {
     return company
 }
 
-UserController.prototype.getUser = async function(userId: number, usr: any): Promise<Users> {
-    let company = this.getCompany(usr)
-    return this.userService.getUser(userId, company.id)
-}
-
-UserController.prototype.getUsers = async function(user: any): Promise<Users[]> {
-    const company: Company = this.getCompany(user)
-    return this.userService.getUsers(company)
-}
-
 UserController.prototype.userLogin = async function(user: Users) {
     const result: Users = await this.userService.userLogin(user)
     if(!result)
@@ -32,7 +22,29 @@ UserController.prototype.userLogin = async function(user: Users) {
     return result
 }
 
-UserController.prototype.saveUser = async function(user: Users): Promise<Users> {
+UserController.prototype.accountRecovery = async function(user: Users) {
+    const result: Users = await this.userService.accountRecovery(user)
+    return result
+}
+
+UserController.prototype.getUser = async function(userId: number, usr: any): Promise<Users> {
+    let company = this.getCompany(usr)
+    return this.userService.getUser(userId, company.id)
+}
+
+UserController.prototype.getUsers = async function(user: any): Promise<Users[]> {
+    const company: Company = this.getCompany(user)
+    console.log("aaaaaaa ", user)
+    return this.userService.getUsers(company)
+}
+
+UserController.prototype.saveRegister = async function(user: Users): Promise<Users> {
+    return this.userService.saveRegister(user)
+}
+
+UserController.prototype.saveUser = async function(user: Users, usr: any): Promise<Users> {
+    const company = this.getCompany(usr)
+    user.company = company
     return this.userService.saveUser(user)
 }
 

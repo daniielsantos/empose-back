@@ -1,5 +1,6 @@
 import "dotenv/config"
 import { db } from "../services/db.service"
+
 jest.mock('pg')
 const pg = require('pg')
 const dbMock = jest.fn().mockReturnValueOnce('ok')
