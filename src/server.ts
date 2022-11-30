@@ -12,6 +12,7 @@ import { orderController } from "./controller/order.controller"
 import { emailSenderController } from "./controller/email.controller"
 import { uploadsController } from "./controller/uploads.controller"
 import { uploadFileController } from "./controller/upload.file.controller"
+import { configController } from "./controller/configs.controller"
 
 
 const app = makeApp(
@@ -26,7 +27,8 @@ const app = makeApp(
     orderController,
     emailSenderController,
     uploadsController,
-    uploadFileController
+    uploadFileController,
+    configController
     )
 
 app.listen(3000, () => {

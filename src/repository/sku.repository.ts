@@ -98,6 +98,7 @@ SkuRepository.prototype.saveSku = async function(sku: Sku) {
 
 SkuRepository.prototype.updateSku = async function(sku: Sku) {
     const skus = new Array
+    sku.images = sku.images || []
     const payload = {
         id: sku.id,
         name: sku.name,
@@ -107,10 +108,9 @@ SkuRepository.prototype.updateSku = async function(sku: Sku) {
         product_id: sku.product.id,
         updated_at: sku.updated_at
     }
-    const query = `UPDATE Sku SET "name" = $2, "description" = $3, "active" = $4, "price" = $5, "product_id" = $6, "updated_at" = $7 WHERE id = $1 RETURNING *`
+    const query = `UPDATE Sku SET "name" = $2, "description" = $3, "active" = $4, "price" = $5, "product_id" = $6, "updated_at" = $7 WHERE id = $1 RETURNING *;`
     const sk = await this.db.query(query, Object.values(payload))
-
-    if(!sku.images)
+    if(!sku.images.length)
         return sk.rows[0]
     sku.images.forEach(item => {
         let pld = {

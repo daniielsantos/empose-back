@@ -6,12 +6,15 @@ import { Store } from "../model/store.model"
 import { storeService } from "./store.service"
 import { emailSender } from "./email.service"
 import { EmailOptions } from "../model/email.model"
+import { configsService } from "./config.service"
+import { Configs } from "../model/configs.model"
 
 function UserService() {
     this.userRepository = userRepository
     this.storeService = storeService
     this.emailSender = emailSender
-    this.bcrypt = crypt
+    this.configsService = configsService
+    this.bcrypt = crypt    
 }
 
 UserService.prototype.getUserByEmail = async function(user: Users) {
@@ -118,13 +121,15 @@ UserService.prototype.saveUser = async function(user: Users) {
 }
 
 UserService.prototype.sendRecoveryEmail = async function(user: Users, subject: string) {
-
+    let config: Configs = await this.configsService.getConfig(user.store.id)
+    if(!config)
+        throw new Error("sistema sem config")
     let options: EmailOptions = {
-        host: process.env.EMAIL_HOST,
-        port: parseInt(process.env.EMAIL_PORT),
-        username: process.env.EMAIL_USERNAME,
-        password: process.env.EMAIL_PASSWORD,
-        from: process.env.EMAIL_FORM,
+        host: config.email_host,
+        port: config.email_port,
+        username: config.email_username,
+        password: config.email_password,
+        from: config.email_username,
         to: user.email,
         template: 'password_recover',
         params: {
@@ -133,7 +138,6 @@ UserService.prototype.sendRecoveryEmail = async function(user: Users, subject: s
         },
         subject: subject
     }
-
     await this.emailSender.send(options) 
 }
 

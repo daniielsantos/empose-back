@@ -27,7 +27,7 @@ Tables.prototype.create = async function() {
         name CHARACTER VARYING(250) NOT NULL,
         email CHARACTER VARYING(100) NOT NULL,
         password CHARACTER VARYING(255) NOT NULL,
-        role CHARACTER VARYING(100) NOT NULL,
+        role INT,
         store_id INT NOT NULL REFERENCES Store(id) ON DELETE CASCADE,
         created_at TIMESTAMP,
         updated_at TIMESTAMP
@@ -164,6 +164,15 @@ Tables.prototype.create = async function() {
     )`
     await this.db.query(query)
     
+    query = `CREATE TABLE IF NOT EXISTS configs(
+        id SERIAL PRIMARY KEY,
+        email_host CHARACTER VARYING(150),
+        email_port INT,
+        email_username CHARACTER VARYING(250),
+        email_password CHARACTER VARYING(250),
+        store_id INT NOT NULL REFERENCES Store(id) ON DELETE CASCADE
+    )`
+    await this.db.query(query)
 }
 
 

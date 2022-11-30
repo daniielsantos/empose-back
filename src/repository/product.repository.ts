@@ -61,6 +61,7 @@ ProductRepository.prototype.saveProduct = async function(product: Product) {
         store_id: product.store.id,
         created_at: product.created_at,
     }
+    
     const query = format(`INSERT INTO Product("name", "description", "active", "discount", "category_id", "store_id", "created_at") VALUES (%L) RETURNING *`, Object.values(payload)) 
     const prod = await this.db.query(query)
     for await (let it of product.skus) {
@@ -83,7 +84,6 @@ ProductRepository.prototype.updateProduct = async function(product: Product) {
         store_id: product.store.id,
         updated_at: product.updated_at,
     }
-    // console.log("entrou ", product.skus)
     
     const query = `UPDATE Product SET "name" = $2, "description" = $3, "active" = $4, "discount" = $5, "category_id" = $6, "store_id" = $7, "updated_at" = $8 WHERE id = $1 RETURNING *`
     let res = await this.db.query(query, Object.values(payload))

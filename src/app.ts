@@ -21,7 +21,8 @@ function makeApp(
     orderController = null, 
     emailSenderController = null,
     uploadsController = null,
-    uploadFileController = null
+    uploadFileController = null,
+    configController = null
     ) {
 
 
@@ -237,6 +238,44 @@ function makeApp(
             res.status(400).send({ message: e.message })            
         }
     })
+
+// -----------------------------
+// -----------------------------
+app.get("/api/v1/configs", isAuthenticated, async (req: Req, res: Response) => {
+    try {
+        const result = await configController.getConfig(req.user)
+        res.send(result)            
+    } catch (e) {
+        res.status(400).send({ message: e.message })            
+    }
+})
+
+app.post("/api/v1/configs", isAuthenticated, async (req: Req, res: Response) => {
+    try {
+        const result = await configController.saveConfig(req.body, req.user)
+        res.send(result)            
+    } catch (e) {
+        res.status(400).send({ message: e.message })            
+    }
+})
+
+app.put("/api/v1/configs", isAuthenticated, async (req: Req, res: Response) => {
+    try {
+        const result = await configController.updateConfig(req.body, req.user)
+        res.send(result)            
+    } catch (e) {
+        res.status(400).send({ message: e.message })            
+    }
+})
+
+app.delete("/api/v1/configs", isAuthenticated, async (req: Req, res: Response) => {
+    try {
+        const result = await configController.deleteConfig(req.body, req.user)
+        res.send(result)            
+    } catch (e) {
+        res.status(400).send({ message: e.message })            
+    }
+})
 
 // -----------------------------
 
