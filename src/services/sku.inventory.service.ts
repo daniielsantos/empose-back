@@ -1,4 +1,4 @@
-import { Company } from "../model/company.model"
+import { Store } from "../model/store.model"
 import { SkuInventory } from "../model/sku.inventory.model"
 import { skuInventoryRepository } from "../repository/sku.inventory"
 
@@ -6,18 +6,18 @@ function SkuInventoryService() {
     this.skuInventoryRepository = skuInventoryRepository
 }
 
-SkuInventoryService.prototype.getSkusInventory = async function(company: Company) {
+SkuInventoryService.prototype.getSkusInventory = async function(store: Store) {
     try {
-        const result = await this.skuInventoryRepository.getSkusInventory(company.id)
+        const result = await this.skuInventoryRepository.getSkusInventory(store.id)
         return result.rows
     } catch(e) {
         throw new Error(e.message)
     }
 }
 
-SkuInventoryService.prototype.getSkuInventory = async function(skuInventoryId: number, companyId: number) {
+SkuInventoryService.prototype.getSkuInventory = async function(skuInventoryId: number, storeId: number) {
     try {
-        const result = await this.skuInventoryRepository.getSkuInventory(skuInventoryId, companyId)        
+        const result = await this.skuInventoryRepository.getSkuInventory(skuInventoryId, storeId)        
         return result.rows[0]
     } catch(e) {
         throw new Error(e.message)
@@ -26,7 +26,7 @@ SkuInventoryService.prototype.getSkuInventory = async function(skuInventoryId: n
 
 SkuInventoryService.prototype.updateSkuInventory = async function(skuInventory: SkuInventory) {
     try {
-        let pay = await this.getSkuInventory(skuInventory.id, skuInventory.company.id)
+        let pay = await this.getSkuInventory(skuInventory.id, skuInventory.store.id)
         if(!pay)
             throw new Error("inventario nao encontrado")
         skuInventory.updated_at = new Date

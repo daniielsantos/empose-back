@@ -40,8 +40,8 @@ describe('/api/v1/order', () => {
     let order, payload, orderResponse
     let token = 'bearer '
     order = {
-        status: "AGUARDANDO PAGAMENTO",
-        delivery_status: "AGUARDANDO",
+        status: 1,
+        delivery_status: 1,
         payment: {
             id: 4
         },
@@ -67,7 +67,7 @@ describe('/api/v1/order', () => {
         id: 10,
         name: "Credito",
         description: "credito 1x",
-        company_id: 1,
+        store_id: 1,
         created_at: "2022-11-13T05:40:53.100Z",
         updated_at: null
     }
@@ -76,7 +76,7 @@ describe('/api/v1/order', () => {
     payload = {
         email: "teste@teste.com",
         name: "teste",
-        company_id: 1
+        store_id: 1
     }
     token += jwt.sign(payload, process.env.SECRET as string)
 

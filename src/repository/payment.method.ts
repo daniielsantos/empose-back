@@ -6,31 +6,31 @@ function PaymentMethod(){
     this.db = db
 }
 
-PaymentMethod.prototype.getPaymentMethods = async function(companyId: number) {
+PaymentMethod.prototype.getPaymentMethods = async function(storeId: number) {
     const query = `SELECT p.id, p.name, p.description, p.created_at, p.updated_at 
     FROM payment_method p
-    WHERE p.company_id = $1
+    WHERE p.store_id = $1
     `
-    return this.db.query(query, [companyId])    
+    return this.db.query(query, [storeId])    
 }
 
-PaymentMethod.prototype.getPaymentMethod = async function(paymentMethodId: number, companyId: number) {
+PaymentMethod.prototype.getPaymentMethod = async function(paymentMethodId: number, storeId: number) {
     const query = `SELECT p.id, p.name, p.description, p.created_at, p.updated_at 
     FROM payment_method p
     WHERE p.id = $1
-    AND p.company_id = $2
+    AND p.store_id = $2
     `
-    return this.db.query(query, [paymentMethodId, companyId])    
+    return this.db.query(query, [paymentMethodId, storeId])    
 }
 
 PaymentMethod.prototype.savePaymentMethod = async function(paymentMethod: PaymentMethods) {
     let payload = {
         name: paymentMethod.name,
         description: paymentMethod.description,
-        company_id: paymentMethod.company.id,
+        store_id: paymentMethod.store.id,
         created_at: paymentMethod.created_at
     }
-    const query = format(`INSERT INTO payment_method("name", "description", "company_id", "created_at") VALUES (%L) RETURNING *`, Object.values(payload)) 
+    const query = format(`INSERT INTO payment_method("name", "description", "store_id", "created_at") VALUES (%L) RETURNING *`, Object.values(payload)) 
     return this.db.query(query)
 }
 
@@ -41,7 +41,7 @@ PaymentMethod.prototype.updatePaymentMethod = async function(paymentMethod: Paym
         description: paymentMethod.description,
         updated_at: paymentMethod.updated_at,
     }
-    const query = `UPDATE payment_method SET "name" = $2, "description" = $3, "updated_at" = $4 WHERE id = $1 RETURNING id`
+    const query = `UPDATE payment_method SET "name" = $2, "description" = $3, "updated_at" = $4 WHERE id = $1 RETURNING *`
     return this.db.query(query, Object.values(payload))
 }
 

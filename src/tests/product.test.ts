@@ -55,7 +55,7 @@ describe('/api/v1/product', () => {
         active: true,
         discount: "0.25",
         category_id: 3,
-        company_id: 1,
+        store_id: 1,
         created_at: "2022-11-13T06:26:42.848Z",
         updated_at: null
     }
@@ -64,7 +64,7 @@ describe('/api/v1/product', () => {
     payload = {
         email: "teste@teste.com",
         name: "teste",
-        company_id: 1
+        store_id: 1
     }
     token += jwt.sign(payload, process.env.SECRET as string)
 

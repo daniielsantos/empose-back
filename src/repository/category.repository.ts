@@ -6,31 +6,31 @@ function CategoryRepository(){
     this.db = db
 }
 
-CategoryRepository.prototype.getCategories = async function(companyId: number) {
+CategoryRepository.prototype.getCategories = async function(storeId: number) {
     const query = `SELECT c.id, c.name, c.description, c.created_at, c.updated_at
     FROM category c
-    WHERE c.company_id = $1
+    WHERE c.store_id = $1
     `
-    return this.db.query(query, [companyId])    
+    return this.db.query(query, [storeId])    
 }
 
-CategoryRepository.prototype.getCategory = async function(categoryId: number, companyId: number) {
+CategoryRepository.prototype.getCategory = async function(categoryId: number, storeId: number) {
     const query = `SELECT c.id, c.name, c.description, c.created_at, c.updated_at
     FROM category c
     WHERE c.id = $1
-    AND c.company_id = $2
+    AND c.store_id = $2
     `
-    return this.db.query(query, [categoryId, companyId])    
+    return this.db.query(query, [categoryId, storeId])    
 }
 
 CategoryRepository.prototype.saveCategory = async function(category: Category) {
     const payload = {
         name: category.name,
         description: category.description,
-        company_id: category.company.id,
+        store_id: category.store.id,
         created_at: category.created_at
     }
-    const query = format(`INSERT INTO category("name", "description", "company_id", "created_at") VALUES (%L) RETURNING *`, Object.values(payload)) 
+    const query = format(`INSERT INTO category("name", "description", "store_id", "created_at") VALUES (%L) RETURNING *`, Object.values(payload)) 
     return this.db.query(query)
 }
 
@@ -41,7 +41,7 @@ CategoryRepository.prototype.updateCategory = async function(category: Category)
         description: category.description,
         updated_at: category.updated_at
     }    
-    const query = `UPDATE category SET "name" = $2, "description" = $3, "updated_at" = $4 WHERE id = $1 RETURNING id`
+    const query = `UPDATE category SET "name" = $2, "description" = $3, "updated_at" = $4 WHERE id = $1 RETURNING *`
     return this.db.query(query, Object.values(payload))
 }
 

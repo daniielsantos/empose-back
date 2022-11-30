@@ -6,12 +6,12 @@ function ClientRepository(){
     this.db = db
 }
 
-ClientRepository.prototype.getClients = async function(companyId: number) {
+ClientRepository.prototype.getClients = async function(storeId: number) {
     const query = `SELECT c.id, c.name, c.email, c.cpf, c.phone_number, c.created_at, c.updated_at,    
     json_strip_nulls(json_agg(json_build_object('id', ca.id, 'address', ca.address, 'city', ca.city, 'state', ca.state, 'zip_code', ca.zip_code, 'country', ca.country))) AS address
     FROM client c
     LEFT JOIN client_address ca ON ca.client_id = c.id
-    WHERE c.company_id = $1
+    WHERE c.store_id = $1
     GROUP BY 
     c.id,
     c.name,
@@ -21,16 +21,16 @@ ClientRepository.prototype.getClients = async function(companyId: number) {
     c.created_at,
     c.updated_at
     `
-    return this.db.query(query, [companyId])    
+    return this.db.query(query, [storeId])    
 }
 
-ClientRepository.prototype.getClient = async function(clientId: number, companyId: number) {
+ClientRepository.prototype.getClient = async function(clientId: number, storeId: number) {
     const query = `SELECT c.id, c.name, c.email, c.cpf, c.phone_number, c.created_at, c.updated_at, 
     json_strip_nulls(json_agg(json_build_object('id', ca.id, 'address', ca.address, 'city', ca.city, 'state', ca.state, 'zip_code', ca.zip_code, 'country', ca.country))) AS address
     FROM client c
     LEFT JOIN client_address ca ON ca.client_id = c.id
     WHERE c.id = $1
-    AND c.company_id = $2
+    AND c.store_id = $2
     GROUP BY 
     c.id,
     c.name,
@@ -40,7 +40,7 @@ ClientRepository.prototype.getClient = async function(clientId: number, companyI
     c.created_at,
     c.updated_at
     `
-    return this.db.query(query, [clientId, companyId])    
+    return this.db.query(query, [clientId, storeId])    
 }
 
 ClientRepository.prototype.saveClient = async function(client: Client) {
@@ -51,9 +51,9 @@ ClientRepository.prototype.saveClient = async function(client: Client) {
         cpf: client.cpf,
         phone_number: client.phone_number,
         created_at: client.created_at,
-        company_id: client.company.id
+        store_id: client.store.id
     }
-    const query = format(`INSERT INTO Client("name", "email", "cpf", "phone_number", "created_at", "company_id") VALUES (%L) RETURNING *`, Object.values(payload)) 
+    const query = format(`INSERT INTO Client("name", "email", "cpf", "phone_number", "created_at", "store_id") VALUES (%L) RETURNING *`, Object.values(payload)) 
     const cli = await this.db.query(query)
     client.address.forEach(item => {
         let pld = {
@@ -64,11 +64,11 @@ ClientRepository.prototype.saveClient = async function(client: Client) {
             zip_code: item.zip_code,
             country: item.country,
             created_at: new Date,
-            company_id: cli.rows[0].company_id
+            store_id: cli.rows[0].store_id
         }
         addresses.push(Object.values(pld))
     })
-    const addrs = format(`INSERT INTO client_address("client_id","address","city","state","zip_code", "country", "created_at", "company_id") VALUES %L RETURNING *;`, addresses)
+    const addrs = format(`INSERT INTO client_address("client_id","address","city","state","zip_code", "country", "created_at", "store_id") VALUES %L RETURNING *;`, addresses)
     const result = await this.db.query(addrs)
     let clientSaved: Client = {...cli.rows[0]}
     clientSaved.address = result.rows
@@ -99,13 +99,13 @@ ClientRepository.prototype.updateClient = async function(client: Client) {
             country: item.country,
             created_at: item.created_at || new Date,
             updated_at: new Date,
-            company_id: cli.rows[0].company_id
+            store_id: cli.rows[0].store_id
         }
         addresses.push(Object.values(pld))
     })
     const del_addrs = `DELETE FROM client_address WHERE client_id = $1`
     await this.db.query(del_addrs, [client.id])
-    const addrs = format(`INSERT INTO client_address("client_id", "address", "city", "state", "zip_code", "country", "created_at", "updated_at", "company_id") VALUES %L RETURNING *`, addresses)
+    const addrs = format(`INSERT INTO client_address("client_id", "address", "city", "state", "zip_code", "country", "created_at", "updated_at", "store_id") VALUES %L RETURNING *`, addresses)
     const result = await this.db.query(addrs)
     let clientSaved: Client = {...cli.rows[0]}
     clientSaved.address = result.rows

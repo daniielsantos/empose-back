@@ -6,40 +6,40 @@ import jwt from "jsonwebtoken"
 
 jest.setTimeout(10000)
 
-const saveCompany = jest.fn()
-const getCompanies = jest.fn()
-const getCompany = jest.fn()
-const updateCompany = jest.fn()
-const deleteCompany = jest.fn()
+const saveStore = jest.fn()
+const getStores = jest.fn()
+const getStore = jest.fn()
+const updateStore = jest.fn()
+const deleteStore = jest.fn()
 
 const app = makeApp({
 },{
 },{
-    getCompanies,
-    saveCompany,
-    getCompany,
-    updateCompany,
-    deleteCompany
+    getStores,
+    saveStore,
+    getStore,
+    updateStore,
+    deleteStore
 })
 
 
-describe('/api/v1/company', () => {
+describe('/api/v1/store', () => {
     beforeEach(() => {
-        saveCompany.mockReset()
-        getCompanies.mockReset()
-        getCompany.mockReset()
-        updateCompany.mockReset()
-        deleteCompany.mockReset()
+        saveStore.mockReset()
+        getStores.mockReset()
+        getStore.mockReset()
+        updateStore.mockReset()
+        deleteStore.mockReset()
     });
-    let company, payload, companyResponse
+    let store, payload, storeResponse
     let token = 'bearer '
-    company = {
+    store = {
         name: "emp",
         email: "emp@bace.com",
         cnpj: "2313123123",
         address: "Rua Almirante 331"
     }
-    companyResponse = {
+    storeResponse = {
         id: 5,
         name: "emp",
         email: "emp@bace.com",
@@ -48,153 +48,153 @@ describe('/api/v1/company', () => {
         created_at: "2022-11-13T05:27:32.721Z",
         updated_at: null
     }
-    const listCompany = []
-    listCompany.push(companyResponse)
+    const listStore = []
+    listStore.push(storeResponse)
     payload = {
         email: "teste@teste.com",
         name: "teste",
-        company_id: 1
+        store_id: 1
     }
     token += jwt.sign(payload, process.env.SECRET as string)
 
-    it('should save the company on database and return the company', async () => {
+    it('should save the store on database and return the store', async () => {
         expect(token)
-        saveCompany.mockResolvedValue(companyResponse)
+        saveStore.mockResolvedValue(storeResponse)
         let res = await request(app)
-            .post('/api/v1/company')
+            .post('/api/v1/store')
             .set('authorization', token)
-            .send(companyResponse)
+            .send(storeResponse)
         
         expect(res.status).toBe(200)
-        expect(saveCompany.mock.calls.length).toBe(1)
-        expect(saveCompany.mock.calls[0][0]).toMatchObject(companyResponse)
-        expect(res.body).toMatchObject(companyResponse)
+        expect(saveStore.mock.calls.length).toBe(1)
+        expect(saveStore.mock.calls[0][0]).toMatchObject(storeResponse)
+        expect(res.body).toMatchObject(storeResponse)
     });
 
     it('should return error', async () => {
-        saveCompany.mockImplementationOnce(() => {
+        saveStore.mockImplementationOnce(() => {
             throw new Error("erro ao salvar empresa")
         })
         let res = await request(app)
-        .post('/api/v1/company')
+        .post('/api/v1/store')
         .set('authorization', token)
-        .send(company)
+        .send(store)
 
         expect(res.status).toBe(400)
         expect(res.body).toMatchObject({message: "erro ao salvar empresa"})
-        expect(saveCompany.mock.calls.length).toBe(1)
+        expect(saveStore.mock.calls.length).toBe(1)
     });
 
-    it('should return all companys', async () => {
+    it('should return all stores', async () => {
         expect(token)
-        getCompanies.mockResolvedValue(listCompany)
+        getStores.mockResolvedValue(listStore)
         let res = await request(app)
-            .get('/api/v1/company')
+            .get('/api/v1/store')
             .set('authorization', token)
             .send()
             
         expect(res.status).toBe(200)
-        expect(getCompanies.mock.calls.length).toBe(1)
-        // expect(getCompanies.mock.calls[0][0]).toBe(listCompany)
-        expect(res.body).toMatchObject(listCompany)
+        expect(getStores.mock.calls.length).toBe(1)
+        // expect(getStores.mock.calls[0][0]).toBe(listStore)
+        expect(res.body).toMatchObject(listStore)
     });
 
     it('should return error 2', async () => {
-        getCompanies.mockImplementationOnce(() => {
+        getStores.mockImplementationOnce(() => {
             throw new Error("erro ao buscar empresa")
         })
         let res = await request(app)
-        .get('/api/v1/company')
+        .get('/api/v1/store')
         .set('authorization', token)
         .send()
 
         expect(res.status).toBe(400)
         expect(res.body).toMatchObject({message: "erro ao buscar empresa"})
-        expect(getCompanies.mock.calls.length).toBe(1)
+        expect(getStores.mock.calls.length).toBe(1)
     });
 
-    it('should return a company', async () => {
+    it('should return a store', async () => {
         expect(token)
-        getCompany.mockResolvedValue(companyResponse)
+        getStore.mockResolvedValue(storeResponse)
         let res = await request(app)
-            .get('/api/v1/company/1')
+            .get('/api/v1/store/1')
             .set('authorization', token)
             .send()
             
         expect(res.status).toBe(200)
-        expect(getCompany.mock.calls.length).toBe(1)
-        expect(getCompany.mock.calls[0][0]).toBe('1')
-        expect(res.body).toMatchObject(companyResponse)
+        expect(getStore.mock.calls.length).toBe(1)
+        expect(getStore.mock.calls[0][0]).toBe('1')
+        expect(res.body).toMatchObject(storeResponse)
     });
 
     it('should return error 3', async () => {
-        getCompany.mockImplementationOnce(() => {
+        getStore.mockImplementationOnce(() => {
             throw new Error("erro ao buscar empresa")
         })
         let res = await request(app)
-        .get('/api/v1/company/1')
+        .get('/api/v1/store/1')
         .set('authorization', token)
         .send()
 
         expect(res.status).toBe(400)
         expect(res.body).toMatchObject({message: "erro ao buscar empresa"})
-        expect(getCompany.mock.calls.length).toBe(1)
+        expect(getStore.mock.calls.length).toBe(1)
     });
 
-    it('should update a company', async () => {
+    it('should update a store', async () => {
         expect(token)
-        updateCompany.mockResolvedValue(companyResponse)
+        updateStore.mockResolvedValue(storeResponse)
         let res = await request(app)
-            .put('/api/v1/company')
+            .put('/api/v1/store')
             .set('authorization', token)
-            .send(companyResponse)
+            .send(storeResponse)
             
         expect(res.status).toBe(200)
-        expect(updateCompany.mock.calls.length).toBe(1)
-        // expect(getCompany.mock.calls[0][0]).toBe('1')
-        expect(res.body).toMatchObject(companyResponse)
+        expect(updateStore.mock.calls.length).toBe(1)
+        // expect(getStore.mock.calls[0][0]).toBe('1')
+        expect(res.body).toMatchObject(storeResponse)
     });
 
     it('should return error 4', async () => {
-        updateCompany.mockImplementationOnce(() => {
+        updateStore.mockImplementationOnce(() => {
             throw new Error("erro ao atualizar empresa")
         })
         let res = await request(app)
-        .put('/api/v1/company/')
+        .put('/api/v1/store/')
         .set('authorization', token)
-        .send(companyResponse)
+        .send(storeResponse)
 
         expect(res.status).toBe(400)
         expect(res.body).toMatchObject({message: "erro ao atualizar empresa"})
-        expect(updateCompany.mock.calls.length).toBe(1)
+        expect(updateStore.mock.calls.length).toBe(1)
     });
 
-    it('should delete a company', async () => {
+    it('should delete a store', async () => {
         expect(token)
-        deleteCompany.mockResolvedValue(companyResponse)
+        deleteStore.mockResolvedValue(storeResponse)
         let res = await request(app)
-            .delete('/api/v1/company')
+            .delete('/api/v1/store')
             .set('authorization', token)
-            .send(companyResponse)
+            .send(storeResponse)
             
         expect(res.status).toBe(200)
-        expect(deleteCompany.mock.calls.length).toBe(1)
-        // expect(getCompany.mock.calls[0][0]).toBe('1')
-        expect(res.body).toMatchObject(companyResponse)
+        expect(deleteStore.mock.calls.length).toBe(1)
+        // expect(getStore.mock.calls[0][0]).toBe('1')
+        expect(res.body).toMatchObject(storeResponse)
     });
 
     it('should return error 5', async () => {
-        deleteCompany.mockImplementationOnce(() => {
+        deleteStore.mockImplementationOnce(() => {
             throw new Error("erro ao deletar empresa")
         })
         let res = await request(app)
-        .delete('/api/v1/company/')
+        .delete('/api/v1/store/')
         .set('authorization', token)
-        .send(companyResponse)
+        .send(storeResponse)
 
         expect(res.status).toBe(400)
         expect(res.body).toMatchObject({message: "erro ao deletar empresa"})
-        expect(deleteCompany.mock.calls.length).toBe(1)
+        expect(deleteStore.mock.calls.length).toBe(1)
     });
 
 });

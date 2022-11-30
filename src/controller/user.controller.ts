@@ -1,18 +1,16 @@
-import { Request, Response } from "express"
-import { Company } from "../model/company.model"
+import { Store } from "../model/store.model"
 import { Users } from "../model/user.model"
 import { userService } from "../services/user.service"
-import { Req } from "../types/request"
 
 function UserController() {
     this.userService = userService
 }
 
-UserController.prototype.getCompany = function(user: any) {
-    const company: Company = {
-        id: user.company_id
+UserController.prototype.getStore = function(user: any) {
+    const store: Store = {
+        id: user.store_id
     }
-    return company
+    return store
 }
 
 UserController.prototype.userLogin = async function(user: Users) {
@@ -28,35 +26,32 @@ UserController.prototype.accountRecovery = async function(user: Users) {
 }
 
 UserController.prototype.getUser = async function(userId: number, usr: any): Promise<Users> {
-    let company = this.getCompany(usr)
-    return this.userService.getUser(userId, company.id)
+    let store = this.getStore(usr)
+    return this.userService.getUser(userId, store.id)
 }
 
 UserController.prototype.getUsers = async function(user: any): Promise<Users[]> {
-    const company: Company = this.getCompany(user)
-    console.log("aaaaaaa ", user)
-    return this.userService.getUsers(company)
+    const store: Store = this.getStore(user)
+    return this.userService.getUsers(store)
 }
 
 UserController.prototype.saveRegister = async function(user: Users): Promise<Users> {
     return this.userService.saveRegister(user)
 }
 
-UserController.prototype.saveUser = async function(user: Users, usr: any): Promise<Users> {
-    const company = this.getCompany(usr)
-    user.company = company
+UserController.prototype.saveUser = async function(user: Users): Promise<Users> {
     return this.userService.saveUser(user)
 }
 
 UserController.prototype.updateUser = async function(user: Users, usr: any): Promise<Users> {
-    const company = this.getCompany(usr)
-    user.company = company
+    const store = this.getStore(usr)
+    user.store = store
     return this.userService.updateUser(user)
 }
 
 UserController.prototype.deleteUser = async function(user: Users, usr: any): Promise<void> {
-    const company = this.getCompany(usr)
-    user.company = company
+    const store = this.getStore(usr)
+    user.store = store
     return this.userService.deleteUser(user)
 }
 

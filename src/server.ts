@@ -1,7 +1,7 @@
 require("dotenv").config()
 import makeApp from "./app"
 import { clientController } from "./controller/client.controller"
-import { companyController } from "./controller/company.controller"
+import { storeController } from "./controller/store.controller"
 import { paymentMethodController } from "./controller/payment.method.controller"
 import { userController } from "./controller/user.controller"
 import { categoryController } from "./controller/category.controller"
@@ -17,7 +17,7 @@ import { uploadFileController } from "./controller/upload.file.controller"
 const app = makeApp(
     userController, 
     clientController, 
-    companyController, 
+    storeController, 
     paymentMethodController, 
     categoryController, 
     skuController, 

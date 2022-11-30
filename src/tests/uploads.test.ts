@@ -58,7 +58,7 @@ describe('/api/v1/uploads', () => {
     payload = {
         email: "teste@teste.com",
         name: "teste",
-        company_id: 1
+        store_id: 1
     }
     token += jwt.sign(payload, process.env.SECRET as string)
 

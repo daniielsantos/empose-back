@@ -5,24 +5,24 @@ import { Req } from "../types/request"
 import { Response } from "express"
 import { uploadsService } from "./uploads.service"
 import { Uploads } from "../model/uploads.model"
-import { Company } from "../model/company.model"
+import { Store } from "../model/store.model"
 
 function UploadFileService() { 
     this.uploadsService = uploadsService
 }
 
-UploadFileService.prototype.getCompany = function(user: any) {
-    const company: Company = {
-        id: user.company_id
+UploadFileService.prototype.getStore = function(user: any) {
+    const store: Store = {
+        id: user.store_id
     }
-    return company
+    return store
 }
 
-UploadFileService.prototype.saveFile = async function(company: Company, fileName: string, filePath: string) {
+UploadFileService.prototype.saveFile = async function(store: Store, fileName: string, filePath: string) {
     let uploadFile: Uploads = {
         name: fileName,
         path: filePath,
-        company: company,
+        store: store,
     }
     return this.uploadsService.saveUpload(uploadFile)
 }
@@ -30,7 +30,7 @@ UploadFileService.prototype.saveFile = async function(company: Company, fileName
 UploadFileService.prototype.uploadFile = async function(req: Req, res: Response) {
     try {
         let fileName, filePath
-        const company = this.getCompany(req.user)
+        const store = this.getStore(req.user)
         const form = new formidable.IncomingForm();
         let uploadPath = path.resolve('./src/uploads') +'\\'
 
@@ -48,7 +48,7 @@ UploadFileService.prototype.uploadFile = async function(req: Req, res: Response)
             })
         })
 
-        let fileSaved = await this.saveFile(company, fileName, filePath)
+        let fileSaved = await this.saveFile(store, fileName, filePath)
         res.send(fileSaved)
     } catch (e) {
         throw new Error("falha ao fazer upload "+e.message)

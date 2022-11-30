@@ -1,4 +1,4 @@
-import { Company } from "./company.model";
+import { Store } from "./store.model";
 
 export class Users {
     constructor(
@@ -7,7 +7,7 @@ export class Users {
       public email?: string,
       public password?: string,
       public role?: string,
-      public company?: Company,
+      public store?: Store,
       public created_at?: Date,
       public updated_at?: Date,
     ) {}

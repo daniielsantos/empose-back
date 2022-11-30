@@ -1,4 +1,4 @@
-import { Company } from "../model/company.model"
+import { Store } from "../model/store.model"
 import { Orders } from "../model/order.model"
 import { orderRepository } from "../repository/order.repository"
 import { clientService } from "./client.service"
@@ -18,7 +18,7 @@ OrderService.prototype.loadOrderInfo = async function(order: Orders) {
     let i = 0
     let total = 0
     for await (const it of order.items) {
-        let sk = await this.skuService.getSku(it.sku.id, order.company.id)
+        let sk = await this.skuService.getSku(it.sku.id, order.store.id)
         order.items[i].sku = sk
         total += (parseFloat(sk.price) * it.quantity)
         i++
@@ -28,28 +28,28 @@ OrderService.prototype.loadOrderInfo = async function(order: Orders) {
 }
 
 OrderService.prototype.getErros = async function(order: Orders) {
-    let res = await this.clientService.getClient(order.client.id, order.company.id)
+    let res = await this.clientService.getClient(order.client.id, order.store.id)
     if(!res)
         throw new Error("cliente do pedido nao encontrado")
-    res = await this.paymentMethodService.getPaymentMethod(order.payment.id, order.company.id)
+    res = await this.paymentMethodService.getPaymentMethod(order.payment.id, order.store.id)
     if(!res)
         throw new Error("metodo de pagamento do pedido nao encontrado")
     if(!order.items)
         throw new Error("pedido sem produto")
 }
 
-OrderService.prototype.getOrders = async function(company: Company) {
+OrderService.prototype.getOrders = async function(store: Store) {
     try {
-        const result = await this.orderRepository.getOrders(company.id)
+        const result = await this.orderRepository.getOrders(store.id)
         return result.rows
     } catch(e) {
         throw new Error(e.message)
     }
 }
 
-OrderService.prototype.getOrder = async function(orderId: number, companyId: number) {
+OrderService.prototype.getOrder = async function(orderId: number, storeId: number) {
     try {
-        const result = await this.orderRepository.getOrder(orderId, companyId)
+        const result = await this.orderRepository.getOrder(orderId, storeId)
         return result.rows[0]
     } catch(e) {
         throw new Error(e.message)
@@ -71,7 +71,7 @@ OrderService.prototype.saveOrder = async function(order: Orders) {
 OrderService.prototype.updateOrder = async function(order: Orders) {
     try {
         order.updated_at = new Date        
-        let pay = await this.getOrder(order.id, order.company.id)
+        let pay = await this.getOrder(order.id, order.store.id)
         
         if(!pay)
             throw new Error("pedido nao encontrado")
@@ -86,7 +86,7 @@ OrderService.prototype.updateOrder = async function(order: Orders) {
 
 OrderService.prototype.deleteOrder = async function(order: Orders) {
     try {
-        let pay = await this.getOrder(order.id, order.company.id)
+        let pay = await this.getOrder(order.id, order.store.id)
         if(!pay)
             throw new Error("pedido nao encontrado")
         await this.orderRepository.deleteOrder(order)

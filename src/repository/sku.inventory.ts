@@ -5,33 +5,31 @@ function SkuInventoryRepository(){
     this.db = db
 }
 
-SkuInventoryRepository.prototype.getSkusInventory = async function(companyId: number) {
+SkuInventoryRepository.prototype.getSkusInventory = async function(storeId: number) {
     const query = `SELECT si.id, si.quantity, si.sku_id, si.created_at, si.updated_at
     FROM sku_inventory si
-    WHERE si.company_id = $1
+    WHERE si.store_id = $1
     `
-    return this.db.query(query, [companyId])    
+    return this.db.query(query, [storeId])    
 }
 
-SkuInventoryRepository.prototype.getSkuInventory = async function(skuInventoryId: number, companyId: number) {
-    console.log("entrou ", skuInventoryId)
-    console.log("entrou ", companyId)
+SkuInventoryRepository.prototype.getSkuInventory = async function(skuInventoryId: number, storeId: number) {
     const query = `SELECT si.id, si.quantity, si.sku_id, si.created_at, si.updated_at 
     FROM sku_inventory sI
     WHERE si.id = $1
-    AND si.company_id = $2
+    AND si.store_id = $2
     `
-    return this.db.query(query, [skuInventoryId, companyId])    
+    return this.db.query(query, [skuInventoryId, storeId])    
 }
 
 SkuInventoryRepository.prototype.saveSkuInventory = async function(skuInventory: any) {
     let inventory = {
         quantity: skuInventory.quantity,
         sku_id: skuInventory.sku_id,
-        company_id: skuInventory.company_id,
+        store_id: skuInventory.store_id,
         created_at: skuInventory.created_at
     }
-    const inventoryQuery = format(`INSERT INTO Sku_inventory("quantity", "sku_id", "company_id", "created_at") VALUES (%L) RETURNING *`, Object.values(inventory))
+    const inventoryQuery = format(`INSERT INTO Sku_inventory("quantity", "sku_id", "store_id", "created_at") VALUES (%L) RETURNING *`, Object.values(inventory))
     return this.db.query(inventoryQuery)
 }
 

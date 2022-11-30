@@ -1,4 +1,4 @@
-import { Company } from "../model/company.model"
+import { Store } from "../model/store.model"
 import { Uploads } from "../model/uploads.model"
 import { uploadsRepository } from "../repository/uploads.repository"
 import fs from "fs"
@@ -8,18 +8,18 @@ function UploadsService() {
     this.uploadsRepository = uploadsRepository
 }
 
-UploadsService.prototype.getUploads = async function(company: Company) {
+UploadsService.prototype.getUploads = async function(store: Store) {
     try {
-        const result = await this.uploadsRepository.getUploads(company.id)
+        const result = await this.uploadsRepository.getUploads(store.id)
         return result.rows
     } catch(e) {
         throw new Error(e.message)
     }
 }
 
-UploadsService.prototype.getUpload = async function(uploadId: number, companyId: number) {
+UploadsService.prototype.getUpload = async function(uploadId: number, storeId: number) {
     try {
-        const result = await this.uploadsRepository.getUpload(uploadId, companyId)        
+        const result = await this.uploadsRepository.getUpload(uploadId, storeId)        
         return result.rows[0]
     } catch(e) {
         throw new Error(e.message)
@@ -38,7 +38,7 @@ UploadsService.prototype.saveUpload = async function(uploads: Uploads) {
 
 UploadsService.prototype.updateUpload = async function(uploads: Uploads) {
     try {
-        let upl = await this.getUpload(uploads.id, uploads.company.id)
+        let upl = await this.getUpload(uploads.id, uploads.store.id)
         const oldPath = path.resolve('./src/uploads/'+upl.name)
         const newPath = path.resolve('./src/uploads/'+uploads.name)
         if(uploads.name != upl.name) {
@@ -59,7 +59,7 @@ UploadsService.prototype.updateUpload = async function(uploads: Uploads) {
 
 UploadsService.prototype.deleteUpload = async function(uploads: Uploads) {
     try {
-        let upl = await this.getUpload(uploads.id, uploads.company.id)
+        let upl = await this.getUpload(uploads.id, uploads.store.id)
         if(!upl)
             throw new Error("upload nao encontrado")
         await this.uploadsRepository.deleteUpload(uploads)

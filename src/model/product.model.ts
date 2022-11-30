@@ -1,5 +1,5 @@
 import { Category } from "./category.model";
-import { Company } from "./company.model";
+import { Store } from "./store.model";
 import { Sku } from "./sku.model";
 
 export class Product {
@@ -11,7 +11,7 @@ export class Product {
       public discount?: number,
       public category?: Category,
       public skus?: Sku[],
-      public company?: Company,
+      public store?: Store,
       public created_at?: Date,
       public updated_at?: Date,
     ) {}

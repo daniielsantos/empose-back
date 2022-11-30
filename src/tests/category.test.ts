@@ -43,7 +43,7 @@ describe('/api/v1/category', () => {
         id: 37,
         name: "Eletronicos22",
         description: "eletronicos22",
-        company_id: 1,
+        store_id: 1,
         created_at: "2022-11-13T05:51:35.312Z",
         updated_at: null
     }
@@ -52,7 +52,7 @@ describe('/api/v1/category', () => {
     payload = {
         email: "teste@teste.com",
         name: "teste",
-        company_id: 1
+        store_id: 1
     }
     token += jwt.sign(payload, process.env.SECRET as string)
 

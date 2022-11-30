@@ -10,9 +10,9 @@ function UsersRepository(){
 
 UsersRepository.prototype.getUserByEmail = async function(user: Users):Promise<Users> {
     const query = `SELECT u.id, u.name, u.email, u.password, u.role, u.created_at, u.updated_at,
-    json_strip_nulls(json_build_object('id', c.id, 'name', c.name, 'email', c.email, 'cnpj', c.cnpj, 'address', c.address)) AS company
+    json_strip_nulls(json_build_object('id', c.id, 'name', c.name, 'email', c.email, 'cnpj', c.cnpj, 'address', c.address)) AS store
     FROM Users u 
-    LEFT JOIN company c ON c.id = u.company_id
+    LEFT JOIN store c ON c.id = u.store_id
     WHERE u.email = $1
     GROUP BY 
     u.id,
@@ -31,19 +31,19 @@ UsersRepository.prototype.getUserByEmail = async function(user: Users):Promise<U
     return this.db.query(query, [user.email])
 }
 
-UsersRepository.prototype.getUser = async function(userId: number, companyId: number):Promise<Users> {
+UsersRepository.prototype.getUser = async function(userId: number, storeId: number):Promise<Users> {
     const query = `SELECT u.id, u.name, u.email, u.password, u.role, u.created_at, u.updated_at 
     FROM Users u WHERE id = $1
-    AND u.company_id = $2
+    AND u.store_id = $2
     `
-    return this.db.query(query, [userId, companyId])
+    return this.db.query(query, [userId, storeId])
 }
 
-UsersRepository.prototype.getUsers = async function(companyId: number):Promise<Users[]> {
+UsersRepository.prototype.getUsers = async function(storeId: number):Promise<Users[]> {
     const query = `SELECT u.id, u.name, u.email, u.password, u.role, u.created_at, u.updated_at 
     FROM Users u 
-    WHERE company_id = $1`
-    return this.db.query(query, [companyId])
+    WHERE store_id = $1`
+    return this.db.query(query, [storeId])
 }
 
 UsersRepository.prototype.saveUser = async function(user: Users): Promise<Users> {
@@ -55,15 +55,15 @@ UsersRepository.prototype.saveUser = async function(user: Users): Promise<Users>
         email: user.email,
         password: user.password,
         role: user.role,
-        company_id: user.company.id,
+        store_id: user.store.id,
         createdAt: new Date
     }
-    const query = format(`INSERT INTO Users(name, email, password, role, company_id, created_at) VALUES (%L) RETURNING *`, Object.values(payload)) 
+    const query = format(`INSERT INTO Users(name, email, password, role, store_id, created_at) VALUES (%L) RETURNING *`, Object.values(payload)) 
     return this.db.query(query)
 }
 
 UsersRepository.prototype.updateUser = async function(user: Users) {
-    let res = await this.getUser(user.id, user.company.id)
+    let res = await this.getUser(user.id, user.store.id)
     let usr: Users = res.rows[0]
     delete usr.created_at
     usr.updated_at = user.updated_at || new Date
@@ -81,7 +81,6 @@ UsersRepository.prototype.updateUser = async function(user: Users) {
 }
 
 UsersRepository.prototype.deleteUser = async function(user: Users) {
-    console.log(user)
     const query = `DELETE 
     FROM users u
     WHERE u.id = $1

@@ -45,7 +45,7 @@ describe('/api/v1/sku-inventory', () => {
         id: 10,
         name: "Credito",
         description: "credito 1x",
-        company_id: 1,
+        store_id: 1,
         created_at: "2022-11-13T05:40:53.100Z",
         updated_at: null
     }
@@ -54,7 +54,7 @@ describe('/api/v1/sku-inventory', () => {
     payload = {
         email: "teste@teste.com",
         name: "teste",
-        company_id: 1
+        store_id: 1
     }
     token += jwt.sign(payload, process.env.SECRET as string)
 

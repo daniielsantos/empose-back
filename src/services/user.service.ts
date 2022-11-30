@@ -2,14 +2,14 @@ import { Users } from "../model/user.model"
 import { userRepository } from "../repository/user.repository"
 import { crypt } from "../services/bcrypt.service"
 import * as jwt from "jsonwebtoken"
-import { Company } from "../model/company.model"
-import { companyService } from "./company.service"
+import { Store } from "../model/store.model"
+import { storeService } from "./store.service"
 import { emailSender } from "./email.service"
 import { EmailOptions } from "../model/email.model"
 
 function UserService() {
     this.userRepository = userRepository
-    this.companyService = companyService
+    this.storeService = storeService
     this.emailSender = emailSender
     this.bcrypt = crypt
 }
@@ -23,19 +23,18 @@ UserService.prototype.getUserByEmail = async function(user: Users) {
     }
 }
 
-UserService.prototype.getUser = async function(userId: number, companyId: number) {
+UserService.prototype.getUser = async function(userId: number, storeId: number) {
     try {
-        const result = await this.userRepository.getUser(userId, companyId)
+        const result = await this.userRepository.getUser(userId, storeId)
         return result.rows[0]
     } catch(e) {
         throw new Error("falha ao buscar por usuario")
     }
 }
 
-UserService.prototype.getUsers = async function(company: Company) {
+UserService.prototype.getUsers = async function(store: Store) {
     try {
-        console.log("entoru user ", company)
-        const result = await this.userRepository.getUsers(company.id)
+        const result = await this.userRepository.getUsers(store.id)
         return result.rows
     } catch(e) {
         throw new Error("falha ao buscar por usuarios")
@@ -54,7 +53,7 @@ UserService.prototype.userLogin = async function(user: Users) {
             const payload = {
                 email: usr.email,
                 name: usr.name,
-                company_id: usr.company.id
+                store_id: usr.store.id
             }
             const token = jwt.sign(payload, process.env.SECRET as string)
             delete usr.password
@@ -78,15 +77,14 @@ UserService.prototype.accountRecovery = async function(user: Users) {
         await this.userRepository.updateUser(usr)
         return {message: 'Senha de recuperação enviada!'}
     } catch(e) {
-        console.log('err ', e.message)
         throw new Error("falha ao recuperar conta")
     }
 }
 
 UserService.prototype.saveRegister = async function(user: Users) {
     try {
-        let company: Company = await this.companyService.saveCompany(user.company)
-        user.company = company
+        let store: Store = await this.storeService.saveStore(user.store)
+        user.store = store
         const hash = await this.bcrypt.hash(user.password)
         user.password = hash
         const result = await this.userRepository.saveUser(user)
@@ -96,12 +94,12 @@ UserService.prototype.saveRegister = async function(user: Users) {
     }
 }
 
+
 UserService.prototype.saveUser = async function(user: Users) {
     try {
-        
-        let company = await this.companyService.getCompany(user.company.id)
-        if(!company)
-            throw new Error("empresa nao encontrada")
+        let store = await this.storeService.getStore(user.store.id)
+        if(!store)
+            throw new Error("loja nao encontrada")
         const usr = await this.getUserByEmail(user)
         if(usr) 
             throw new Error("email em uso")
@@ -142,7 +140,7 @@ UserService.prototype.sendRecoveryEmail = async function(user: Users, subject: s
 UserService.prototype.updateUser = async function(user: Users) {
     try {
         user.updated_at = new Date
-        let usr = await this.getUser(user.id, user.company.id)
+        let usr = await this.getUser(user.id, user.store.id)
         if(!usr)
             throw new Error("usuario nao encontrado")
         const result = await this.userRepository.updateUser(user)
@@ -154,7 +152,7 @@ UserService.prototype.updateUser = async function(user: Users) {
 
 UserService.prototype.deleteUser = async function(user: Users) {
     try {
-        let usr = await this.getUser(user.id, user.company.id)
+        let usr = await this.getUser(user.id, user.store.id)
         if(!usr)
             throw new Error("usuario nao encontrado")
         await this.userRepository.deleteUser(user)

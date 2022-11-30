@@ -13,31 +13,31 @@ const getLocalIp = function() {
     })
 }()
 
-UploadsRepository.prototype.getUploads = async function(companyId: number) {
+UploadsRepository.prototype.getUploads = async function(storeId: number) {
     const query = `SELECT u.id, u.name, '${ipAddr}' || u.path as path, u.created_at, u.updated_at
     FROM uploads u
-    WHERE u.company_id = $1
+    WHERE u.store_id = $1
     `
-    return this.db.query(query, [companyId])    
+    return this.db.query(query, [storeId])    
 }
 
-UploadsRepository.prototype.getUpload = async function(uploadId: number, companyId: number) {
+UploadsRepository.prototype.getUpload = async function(uploadId: number, storeId: number) {
     const query = `SELECT u.id, u.name, '${ipAddr}' || u.path as path, u.created_at, u.updated_at
     FROM uploads u
     WHERE u.id = $1
-    AND u.company_id = $2
+    AND u.store_id = $2
     `
-    return this.db.query(query, [uploadId, companyId])    
+    return this.db.query(query, [uploadId, storeId])    
 }
 
 UploadsRepository.prototype.saveUpload = async function(uploads: Uploads) {
     let payload = {
         name: uploads.name,
         path: uploads.path,
-        company_id: uploads.company.id,
+        store_id: uploads.store.id,
         created_at: uploads.created_at
     }
-    const query = format(`INSERT INTO uploads("name", "path", "company_id", "created_at") VALUES (%L) RETURNING *`, Object.values(payload)) 
+    const query = format(`INSERT INTO uploads("name", "path", "store_id", "created_at") VALUES (%L) RETURNING *`, Object.values(payload)) 
     return this.db.query(query)
 }
 

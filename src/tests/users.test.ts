@@ -41,7 +41,7 @@ describe('/api/v1/users', () => {
         email: "teste@teste.com",
         password: "teste",
         role: "admin",
-        company: {
+        store: {
             id: 1
         }
     }
@@ -49,7 +49,7 @@ describe('/api/v1/users', () => {
         name: "teste",
         email: "teste@teste.com",
         password: "teste",
-        company: {
+        store: {
             id: 1,
             name: 'teste',
             address: 'rua reste',
@@ -69,7 +69,7 @@ describe('/api/v1/users', () => {
     payload = {
         email: "teste@teste.com",
         name: "teste",
-        company_id: 1
+        store_id: 1
     }
     token += jwt.sign(payload, process.env.SECRET as string)
 

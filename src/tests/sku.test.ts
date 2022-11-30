@@ -63,7 +63,7 @@ describe('/api/v1/sku', () => {
         active: true,
         price: "299.50",
         product_id: 1,
-        company_id: 1,
+        store_id: 1,
         created_at: "2022-11-13T02:09:30.836Z",
         updated_at: null,
         images: [
@@ -72,7 +72,7 @@ describe('/api/v1/sku', () => {
                 name: "foto_televisao",
                 url: "localhost/televisaoroxa.jpg",
                 sku_id: 3,
-                company_id: 1,
+                store_id: 1,
                 created_at: "2022-11-13T02:09:30.906Z",
                 updated_at: null
             },
@@ -81,7 +81,7 @@ describe('/api/v1/sku', () => {
                 name: "foto_televisao",
                 url: "localhost/televisaoroxa2.jpg",
                 sku_id: 3,
-                company_id: 1,
+                store_id: 1,
                 created_at: "2022-11-13T02:09:30.906Z",
                 updated_at: null
             }
@@ -92,7 +92,7 @@ describe('/api/v1/sku', () => {
     payload = {
         email: "teste@teste.com",
         name: "teste",
-        company_id: 1
+        store_id: 1
     }
     token += jwt.sign(payload, process.env.SECRET as string)
 

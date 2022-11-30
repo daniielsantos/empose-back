@@ -1,6 +1,6 @@
 import { Request, Response } from "express"
 import { Client } from "../model/client.model"
-import { Company } from "../model/company.model"
+import { Store } from "../model/store.model"
 import { Product } from "../model/product.model"
 import { productRepository } from "../repository/product.repository"
 import { categoryService } from "./category.service"
@@ -12,18 +12,18 @@ function ProductService() {
     this.categoryService = categoryService
 }
 
-ProductService.prototype.getProducts = async function(company: Company) {
+ProductService.prototype.getProducts = async function(store: Store) {
     try {
-        const result = await this.productRepository.getProducts(company.id)
+        const result = await this.productRepository.getProducts(store.id)
         return result.rows
     } catch(e) {
         throw new Error(e.message)
     }
 }
 
-ProductService.prototype.getProduct = async function(productId: number, companyId: number) {
+ProductService.prototype.getProduct = async function(productId: number, storeId: number) {
     try {
-        const result = await this.productRepository.getProduct(productId, companyId)
+        const result = await this.productRepository.getProduct(productId, storeId)
         return result.rows[0]
     } catch(e) {
         throw new Error(e.message)
@@ -33,7 +33,7 @@ ProductService.prototype.getProduct = async function(productId: number, companyI
 ProductService.prototype.saveProduct = async function(product: Product) {
     try {
         product.created_at = new Date
-        let cat = await this.categoryService.getCategory(product.category.id, product.company.id)
+        let cat = await this.categoryService.getCategory(product.category.id, product.store.id)
         if(!cat)
             throw new Error("categoria do produto nao encontrada")
 
@@ -46,7 +46,7 @@ ProductService.prototype.saveProduct = async function(product: Product) {
 
 ProductService.prototype.updateProduct = async function(product: Product) {
     try {
-        let pay = await this.getProduct(product.id, product.company.id)
+        let pay = await this.getProduct(product.id, product.store.id)
         if(!pay)
             throw new Error("produto nao encontrado")
         product.updated_at = new Date
@@ -59,7 +59,7 @@ ProductService.prototype.updateProduct = async function(product: Product) {
 
 ProductService.prototype.deleteProduct = async function(product: Product) {
     try {
-        let pay = await this.getProduct(product.id, product.company.id)
+        let pay = await this.getProduct(product.id, product.store.id)
         if(!pay)
             throw new Error("produto nao encontrado")
         await this.productRepository.deleteProduct(product)

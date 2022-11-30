@@ -1,11 +1,11 @@
-import { Company } from "./company.model";
+import { Store } from "./store.model";
 import { Product } from "./product.model";
 import { SkuImage } from "./sku.image.model";
 import { SkuInventory } from "./sku.inventory.model";
 
 export class Sku {
     constructor(
-      public id?: number,
+      public id?: number | string,
       public name?: string,
       public description?: string,
       public active?: boolean,
@@ -13,7 +13,7 @@ export class Sku {
       public product?: Product,
       public images?: SkuImage[],
       public inventory?: SkuInventory,
-      public company?: Company,
+      public store?: Store,
       public created_at?: Date,
       public updated_at?: Date,
     ) {}

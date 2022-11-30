@@ -1,5 +1,5 @@
 import { Client } from "./client.model";
-import { Company } from "./company.model";
+import { Store } from "./store.model";
 import { PaymentMethods } from "./payment.method.model";
 import { Sku } from "./sku.model";
 
@@ -10,7 +10,7 @@ export class OrderItem {
       public quantity?: number,
       public order?: Orders,
       public sku?: Sku,
-      public company?: Company,
+      public store?: Store,
       public created_at?: Date,
       public updated_at?: Date,
     ) {}
@@ -20,12 +20,13 @@ export class Orders {
     constructor(
       public id?: number,
       public total?: number,
-      public status?: string,
-      public delivery_status?: string,
+      public status?: number,
+      public delivery_status?: number,
       public payment?: PaymentMethods,
       public client?: Client,
       public items?: OrderItem[],
-      public company?: Company,
+      public store?: Store,
+      public canceled?: boolean,
       public created_at?: Date,
       public updated_at?: Date,
     ) {}

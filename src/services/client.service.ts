@@ -1,5 +1,5 @@
 import { Client } from "../model/client.model"
-import { Company } from "../model/company.model"
+import { Store } from "../model/store.model"
 import { clientRepository } from "../repository/client.repository"
 
 
@@ -8,18 +8,18 @@ function ClientService() {
     this.clientRepository = clientRepository
 }
 
-ClientService.prototype.getClients = async function(company: Company) {
+ClientService.prototype.getClients = async function(store: Store) {
     try {
-        const result = await this.clientRepository.getClients(company.id)
+        const result = await this.clientRepository.getClients(store.id)
         return result.rows
     } catch(e) {
         throw new Error(e.message)
     }
 }
 
-ClientService.prototype.getClient = async function(clientId: number, companyId: number) {
+ClientService.prototype.getClient = async function(clientId: number, storeId: number) {
     try {
-        const result = await this.clientRepository.getClient(clientId, companyId)
+        const result = await this.clientRepository.getClient(clientId, storeId)
         return result.rows[0]
     } catch(e) {
         throw new Error(e.message)
@@ -38,7 +38,7 @@ ClientService.prototype.saveClient = async function(client: Client) {
 
 ClientService.prototype.updateClient = async function(client: Client) {
     try {
-        let pay = await this.getClient(client.id, client.company.id)
+        let pay = await this.getClient(client.id, client.store.id)
         if(!pay)
             throw new Error("cliente nao encontrado")
         client.updated_at = new Date
@@ -51,7 +51,7 @@ ClientService.prototype.updateClient = async function(client: Client) {
 
 ClientService.prototype.deleteClient = async function(client: Client) {
     try {
-        let pay = await this.getClient(client.id, client.company.id)
+        let pay = await this.getClient(client.id, client.store.id)
         if(!pay)
             throw new Error("cliente nao encontrado")
         await this.clientRepository.deleteClient(client)

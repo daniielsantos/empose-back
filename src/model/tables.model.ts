@@ -9,7 +9,9 @@ Tables.prototype.create = async function() {
     let query
     let result
     
-    query = `CREATE TABLE IF NOT EXISTS Company(
+ 
+
+    query = `CREATE TABLE IF NOT EXISTS Store(
         id SERIAL PRIMARY KEY,
         name CHARACTER VARYING(255) NOT NULL,
         email CHARACTER VARYING(100) NOT NULL,
@@ -26,7 +28,7 @@ Tables.prototype.create = async function() {
         email CHARACTER VARYING(100) NOT NULL,
         password CHARACTER VARYING(255) NOT NULL,
         role CHARACTER VARYING(100) NOT NULL,
-        company_id INT NOT NULL REFERENCES Company(id) ON DELETE CASCADE,
+        store_id INT NOT NULL REFERENCES Store(id) ON DELETE CASCADE,
         created_at TIMESTAMP,
         updated_at TIMESTAMP
     )`    
@@ -38,7 +40,7 @@ Tables.prototype.create = async function() {
         email CHARACTER VARYING(100) NOT NULL,
         cpf CHARACTER VARYING(11) NOT NULL,
         phone_number CHARACTER VARYING(20) NOT NULL,
-        company_id INT NOT NULL REFERENCES Company(id) ON DELETE CASCADE,
+        store_id INT NOT NULL REFERENCES Store(id) ON DELETE CASCADE,
         created_at TIMESTAMP,
         updated_at TIMESTAMP
     )`    
@@ -52,7 +54,7 @@ Tables.prototype.create = async function() {
         zip_code CHARACTER VARYING(20) NOT NULL,
         country CHARACTER VARYING(100) NOT NULL,
         client_id INT NOT NULL REFERENCES Client(id) ON DELETE CASCADE,
-        company_id INT NOT NULL REFERENCES Company(id) ON DELETE CASCADE,
+        store_id INT NOT NULL REFERENCES Store(id) ON DELETE CASCADE,
         created_at TIMESTAMP,
         updated_at TIMESTAMP
     )`    
@@ -62,7 +64,7 @@ Tables.prototype.create = async function() {
         id SERIAL PRIMARY KEY,
         name CHARACTER VARYING(150) NOT NULL,
         description CHARACTER VARYING(250),
-        company_id INT NOT NULL REFERENCES Company(id) ON DELETE CASCADE,
+        store_id INT NOT NULL REFERENCES Store(id) ON DELETE CASCADE,
         created_at TIMESTAMP,
         updated_at TIMESTAMP
     )`
@@ -72,7 +74,7 @@ Tables.prototype.create = async function() {
         id SERIAL PRIMARY KEY,
         name CHARACTER VARYING(150) NOT NULL,
         description CHARACTER VARYING(250),
-        company_id INT NOT NULL REFERENCES Company(id) ON DELETE CASCADE,
+        store_id INT NOT NULL REFERENCES Store(id) ON DELETE CASCADE,
         created_at TIMESTAMP,
         updated_at TIMESTAMP
     )`
@@ -85,11 +87,12 @@ Tables.prototype.create = async function() {
         active BOOLEAN,
         discount DECIMAL,
         category_id INT NOT NULL REFERENCES Category(id) ON DELETE CASCADE,
-        company_id INT NOT NULL REFERENCES Company(id) ON DELETE CASCADE,
+        store_id INT NOT NULL REFERENCES Store(id) ON DELETE CASCADE,
         created_at TIMESTAMP,
         updated_at TIMESTAMP
     )`
     await this.db.query(query)
+
 
 
     query = `CREATE TABLE IF NOT EXISTS Sku(
@@ -99,7 +102,7 @@ Tables.prototype.create = async function() {
         active BOOLEAN,
         price NUMERIC(7, 2),
         product_id INT NOT NULL REFERENCES Product(id) ON DELETE CASCADE,
-        company_id INT NOT NULL REFERENCES Company(id) ON DELETE CASCADE,
+        store_id INT NOT NULL REFERENCES Store(id) ON DELETE CASCADE,
         created_at TIMESTAMP,
         updated_at TIMESTAMP
     )`
@@ -110,7 +113,7 @@ Tables.prototype.create = async function() {
         name CHARACTER VARYING(150),
         url CHARACTER VARYING(250),
         sku_id INT NOT NULL REFERENCES Sku(id) ON DELETE CASCADE,
-        company_id INT NOT NULL REFERENCES Company(id) ON DELETE CASCADE,
+        store_id INT NOT NULL REFERENCES Store(id) ON DELETE CASCADE,
         created_at TIMESTAMP,
         updated_at TIMESTAMP
     )`
@@ -120,7 +123,7 @@ Tables.prototype.create = async function() {
         id SERIAL PRIMARY KEY,
         quantity INT,
         sku_id INT NOT NULL REFERENCES Sku(id) ON DELETE CASCADE,
-        company_id INT NOT NULL REFERENCES Company(id) ON DELETE CASCADE,
+        store_id INT NOT NULL REFERENCES Store(id) ON DELETE CASCADE,
         created_at TIMESTAMP,
         updated_at TIMESTAMP
     )`
@@ -129,11 +132,12 @@ Tables.prototype.create = async function() {
     query = `CREATE TABLE IF NOT EXISTS Orders(
         id SERIAL PRIMARY KEY,
         total NUMERIC(9, 2),
-        status CHARACTER VARYING(50),
-        delivery_status CHARACTER VARYING(50),
+        status INT,
+        delivery_status INT,
         payment_method_id INT REFERENCES Payment_method(id) ON DELETE CASCADE,
         client_id INT REFERENCES Client(id) ON DELETE CASCADE,
-        company_id INT NOT NULL REFERENCES Company(id) ON DELETE CASCADE,
+        store_id INT NOT NULL REFERENCES Store(id) ON DELETE CASCADE,
+        canceled BOOLEAN,
         created_at TIMESTAMP,
         updated_at TIMESTAMP
     )`
@@ -144,7 +148,7 @@ Tables.prototype.create = async function() {
         quantity INT,
         order_id INT NOT NULL REFERENCES Orders(id) ON DELETE CASCADE,
         sku_id INT NOT NULL REFERENCES Sku(id) ON DELETE CASCADE,
-        company_id INT NOT NULL REFERENCES Company(id) ON DELETE CASCADE,
+        store_id INT NOT NULL REFERENCES Store(id) ON DELETE CASCADE,
         created_at TIMESTAMP,
         updated_at TIMESTAMP
     )`
@@ -154,7 +158,7 @@ Tables.prototype.create = async function() {
         id SERIAL PRIMARY KEY,
         name CHARACTER VARYING(150),
         path CHARACTER VARYING(500),
-        company_id INT NOT NULL REFERENCES Company(id) ON DELETE CASCADE,
+        store_id INT NOT NULL REFERENCES Store(id) ON DELETE CASCADE,
         created_at TIMESTAMP,
         updated_at TIMESTAMP
     )`

@@ -1,43 +1,43 @@
 import { Category } from "../model/category.model"
 import { Client } from "../model/client.model"
-import { Company } from "../model/company.model"
+import { Store } from "../model/store.model"
 import { categoryService } from "../services/category.service"
 
 function CategoryController() {
     this.categoryService = categoryService
 }
-CategoryController.prototype.getCompany = function(user: any): Company {
-    const company: Company = {
-        id: user.company_id
+CategoryController.prototype.getStore = function(user: any): Store {
+    const store: Store = {
+        id: user.store_id
     }
-    return company
+    return store
 }
 
 CategoryController.prototype.getCategories = async function(user: any): Promise<Category[]>{
-    const company = this.getCompany(user)
-    return this.categoryService.getCategories(company)
+    const store = this.getStore(user)
+    return this.categoryService.getCategories(store)
 }
 
 CategoryController.prototype.getCategory = async function(categoryId: number, user: any): Promise<Client> {
-    const company = this.getCompany(user)
-    return this.categoryService.getCategory(categoryId, company.id)
+    const store = this.getStore(user)
+    return this.categoryService.getCategory(categoryId, store.id)
 }
 
 CategoryController.prototype.saveCategory = async function(category: Category, user: any): Promise<Category> {
-    const company: Company = this.getCompany(user)
-    category.company = company
+    const store: Store = this.getStore(user)
+    category.store = store
     return this.categoryService.saveCategory(category)
 }
 
 CategoryController.prototype.updateCategory = async function(category: Category, user: any): Promise<Category> {
-    const company = this.getCompany(user)
-    category.company = company
+    const store = this.getStore(user)
+    category.store = store
     return this.categoryService.updateCategory(category)
 }
 
 CategoryController.prototype.deleteCategory = async function(category: Category, user: any): Promise<Category> {
-    const company = this.getCompany(user)
-    category.company = company
+    const store = this.getStore(user)
+    category.store = store
     return this.categoryService.deleteCategory(category)
 }
 

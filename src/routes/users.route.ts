@@ -12,7 +12,6 @@ export default function(userController: any) {
     })
     
     router.post("/users", async (req: Req, res: Response) => {
-        console.log("########## Entrou controller")
         userController.saveUser()
         res.send({ok: "aa"})
         // await userController.saveUser(req, res)

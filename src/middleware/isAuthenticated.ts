@@ -20,6 +20,7 @@ export async function isAuthenticated(req: Req, res: Response, next: any) {
         req.user = user as string;
         next();
     } catch (err) {
+        
         return res.status(500).json({
             message: 'Error: Failed to authenticate token'
         });

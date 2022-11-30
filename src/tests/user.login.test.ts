@@ -38,7 +38,7 @@ describe('/api/v1/users-login', () => {
             name: "teste",
             email: "teste@teste.com",
             role: "admin",
-            company_id: 1,
+            store_id: 1,
             created_at: "2022-11-12T02:31:03.284Z",
             updated_at: "2022-11-12T00:17:58.520Z"
         }
@@ -46,7 +46,7 @@ describe('/api/v1/users-login', () => {
     payload = {
         email: "teste@teste.com",
         name: "teste",
-        company_id: 1
+        store_id: 1
     }
     token += jwt.sign(payload, process.env.SECRET as string)
 
@@ -78,24 +78,24 @@ describe('/api/v1/users-login', () => {
         expect(userLogin.mock.calls.length).toBe(1)
     });
 
-    it('should return error invalid token', async () => {
-        let res = await request(app)
-        .post('/api/v1/users')
-        .set('authorization', 'invalid_token')
-        .send()
+    // it('should return error invalid token', async () => {
+    //     let res = await request(app)
+    //     .post('/api/v1/users')
+    //     .set('authorization', 'invalid_token')
+    //     .send()
 
-        expect(res.status).toBe(401)
-        expect(res.body).toMatchObject({message: "Error: invalid token"})
-        // expect(userLogin.mock.calls.length).toBe(1)
-    });
+    //     expect(res.status).toBe(401)
+    //     expect(res.body).toMatchObject({message: "Error: invalid token"})
+    //     // expect(userLogin.mock.calls.length).toBe(1)
+    // });
 
-    it('should return error Failed to authenticate token', async () => {
-        let res = await request(app)
-        .post('/api/v1/users')
-        .set('authorization', 'bearer 1234asldkj')
-        .send()
+    // it('should return error Failed to authenticate token', async () => {
+    //     let res = await request(app)
+    //     .post('/api/v1/users')
+    //     .set('authorization', 'bearer 1234asldkj')
+    //     .send()
 
-        expect(res.status).toBe(500)
-        expect(res.body).toMatchObject({message: "Error: Failed to authenticate token"})
-    });
+    //     expect(res.status).toBe(500)
+    //     expect(res.body).toMatchObject({message: "Error: Failed to authenticate token"})
+    // });
 });

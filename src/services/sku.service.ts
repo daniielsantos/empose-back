@@ -1,4 +1,4 @@
-import { Company } from "../model/company.model"
+import { Store } from "../model/store.model"
 import { Sku } from "../model/sku.model"
 import { skuRepository } from "../repository/sku.repository"
 import { productService } from "./product.service"
@@ -11,18 +11,18 @@ function SkuService() {
     this.productService = productService
 }
 
-SkuService.prototype.getSkus = async function(company: Company) {
+SkuService.prototype.getSkus = async function(store: Store) {
     try {
-        const result = await this.skuRepository.getSkus(company.id)
+        const result = await this.skuRepository.getSkus(store.id)
         return result.rows
     } catch(e) {
         throw new Error(e.message)
     }
 }
 
-SkuService.prototype.getSku = async function(skuId: number, companyId: number) {
+SkuService.prototype.getSku = async function(skuId: number, storeId: number) {
     try {
-        const result = await this.skuRepository.getSku(skuId, companyId)
+        const result = await this.skuRepository.getSku(skuId, storeId)
         return result.rows[0]
     } catch(e) {
         throw new Error(e.message)
@@ -32,7 +32,7 @@ SkuService.prototype.getSku = async function(skuId: number, companyId: number) {
 SkuService.prototype.saveSku = async function(sku: Sku) {
     try {
         sku.created_at = new Date
-        let prod = await this.productService.getProduct(sku.product.id, sku.company.id)
+        let prod = await this.productService.getProduct(sku.product.id, sku.store.id)
         if(!prod)
             throw new Error("produto nao encontrado: insira um produto")
         const result = await this.skuRepository.saveSku(sku)
@@ -44,7 +44,7 @@ SkuService.prototype.saveSku = async function(sku: Sku) {
 
 SkuService.prototype.updateSku = async function(sku: Sku) {
     try {
-        let sk = await this.getSku(sku.id, sku.company.id)
+        let sk = await this.getSku(sku.id, sku.store.id)
         if(!sk)
             throw new Error("sku nao encontrado")
         sku.updated_at = new Date
@@ -58,7 +58,7 @@ SkuService.prototype.updateSku = async function(sku: Sku) {
 
 SkuService.prototype.deleteSku = async function(sku: Sku) {
     try {
-        let pay = await this.getSku(sku.id, sku.company.id)
+        let pay = await this.getSku(sku.id, sku.store.id)
         if(!pay)
             throw new Error("sku nao encontrado")
         await this.skuRepository.deleteSku(sku)

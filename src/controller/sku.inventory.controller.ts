@@ -1,4 +1,4 @@
-import { Company } from "../model/company.model"
+import { Store } from "../model/store.model"
 import { SkuInventory } from "../model/sku.inventory.model"
 import { skuInventoryService } from "../services/sku.inventory.service"
 
@@ -6,26 +6,26 @@ function SkuInventoryController() {
     this.skuInventoryService = skuInventoryService
 }
 
-SkuInventoryController.prototype.getCompany = function(user: any): Company {
-    const company: Company = {
-        id: user.company_id
+SkuInventoryController.prototype.getStore = function(user: any): Store {
+    const store: Store = {
+        id: user.store_id
     }
-    return company
+    return store
 }
 
 SkuInventoryController.prototype.getSkusInventory = async function(user: any): Promise<SkuInventory[]> {
-    const company: Company = this.getCompany(user)
-    return this.skuInventoryService.getSkusInventory(company)
+    const store: Store = this.getStore(user)
+    return this.skuInventoryService.getSkusInventory(store)
 }
 
 SkuInventoryController.prototype.getSkuInventory = async function(skuInventoryId: number, user: any): Promise<SkuInventory> {
-    const company: Company = this.getCompany(user)
-    return this.skuInventoryService.getSkuInventory(skuInventoryId, company.id)
+    const store: Store = this.getStore(user)
+    return this.skuInventoryService.getSkuInventory(skuInventoryId, store.id)
 }
 
 SkuInventoryController.prototype.updateSkuInventory = async function(skuInventory: SkuInventory, user: any) {
-    const company = this.getCompany(user)
-    skuInventory.company = company
+    const store = this.getStore(user)
+    skuInventory.store = store
     return this.skuInventoryService.updateSkuInventory(skuInventory)
 }
 
