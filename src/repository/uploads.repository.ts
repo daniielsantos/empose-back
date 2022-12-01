@@ -8,9 +8,8 @@ function UploadsRepository(){
 }
 let ipAddr: any
 const getLocalIp = function() {
-    dns.lookup(os.hostname(), function(err, addr, fam) {
-        ipAddr = addr + ':' + process.env.SERVER_PORT + '/'
-    })
+    let inter = os.networkInterfaces().Ethernet.find(it => it.family == 'IPv4')
+    ipAddr = inter.address + ':' + process.env.SERVER_PORT + '/'
 }()
 
 UploadsRepository.prototype.getUploads = async function(storeId: number) {

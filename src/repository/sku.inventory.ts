@@ -6,9 +6,17 @@ function SkuInventoryRepository(){
 }
 
 SkuInventoryRepository.prototype.getSkusInventory = async function(storeId: number) {
-    const query = `SELECT si.id, si.quantity, si.sku_id, si.created_at, si.updated_at
+    const query = `SELECT si.id, si.quantity, si.created_at, si.updated_at,
+    json_build_object('id', s.id, 'name', s.name, 'description', s.description) AS sku
     FROM sku_inventory si
+    LEFT JOIN sku s ON s.id = si.sku_id
     WHERE si.store_id = $1
+    GROUP BY 
+    si.id,
+    si.quantity,
+    si.created_at,
+    si.updated_at,
+    s.id
     `
     return this.db.query(query, [storeId])    
 }
