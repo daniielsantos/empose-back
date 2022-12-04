@@ -33,6 +33,7 @@ describe('/api/v1/users', () => {
         getUser.mockReset()
         updateUser.mockReset()
         deleteUser.mockReset()
+        saveRegister.mockReset()
     });
     let user, payload, userResponse, userRegister
     let token = 'bearer '
@@ -99,6 +100,20 @@ describe('/api/v1/users', () => {
         expect(saveRegister.mock.calls.length).toBe(1)
         expect(saveRegister.mock.calls[0][0]).toMatchObject(userRegister)
         expect(res.body).toMatchObject(userRegister)
+    });
+
+    it('should return error', async () => {
+        saveRegister.mockImplementationOnce(() => {
+            throw new Error("erro")
+        })
+        let res = await request(app)
+        .post('/api/v1/register')
+        // .set('authorization', token)
+        .send(user)
+
+        expect(res.status).toBe(400)
+        expect(res.body).toMatchObject({message: "erro"})
+        expect(saveRegister.mock.calls.length).toBe(1)
     });
 
     it('should return error', async () => {

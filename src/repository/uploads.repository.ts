@@ -1,7 +1,6 @@
 import { db } from "../services/db.service"
 import format from "pg-format"
 import os from "os"
-import dns from "dns"
 import { Uploads } from "../model/uploads.model"
 function UploadsRepository(){
     this.db = db

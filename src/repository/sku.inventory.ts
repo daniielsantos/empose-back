@@ -1,5 +1,6 @@
 import { db } from "../services/db.service"
 import format from "pg-format"
+import { SkuInventory } from "../model/sku.inventory.model"
 
 function SkuInventoryRepository(){
     this.db = db
@@ -21,13 +22,24 @@ SkuInventoryRepository.prototype.getSkusInventory = async function(storeId: numb
     return this.db.query(query, [storeId])    
 }
 
-SkuInventoryRepository.prototype.getSkuInventory = async function(skuInventoryId: number, storeId: number) {
-    const query = `SELECT si.id, si.quantity, si.sku_id, si.created_at, si.updated_at 
-    FROM sku_inventory sI
-    WHERE si.id = $1
+SkuInventoryRepository.prototype.getSkuInventory = async function(skuId: number, storeId: number) {
+    const query = `SELECT si.id, si.quantity, si.created_at, si.updated_at,
+    json_build_object('id', s.id, 'name', s.name, 'description', s.description) AS sku,
+    json_build_object('id', st.id) AS store
+    FROM sku_inventory si
+    LEFT JOIN sku s ON s.id = si.sku_id
+    LEFT JOIN store st ON st.id = si.store_id
+    WHERE si.sku_id = $1
     AND si.store_id = $2
+    GROUP BY 
+    si.id,
+    si.quantity,
+    si.created_at,
+    si.updated_at,
+    s.id,
+    st.id
     `
-    return this.db.query(query, [skuInventoryId, storeId])    
+    return this.db.query(query, [skuId, storeId])    
 }
 
 SkuInventoryRepository.prototype.saveSkuInventory = async function(skuInventory: any) {
@@ -41,13 +53,14 @@ SkuInventoryRepository.prototype.saveSkuInventory = async function(skuInventory:
     return this.db.query(inventoryQuery)
 }
 
-SkuInventoryRepository.prototype.updateSkuInventory = async function(skuInventory: any) {
+SkuInventoryRepository.prototype.updateSkuInventory = async function(skuInventory: SkuInventory) {
     let payload = {
-        id: skuInventory.id,
+        sku_id: skuInventory.sku.id,
+        store_id: skuInventory.store.id,
         quantity: skuInventory.quantity,
-        updated_at: skuInventory.updated_at,
+        updated_at: skuInventory.updated_at
     }
-    const query = `UPDATE sku_inventory SET "quantity" = $2, "updated_at" = $3 WHERE id = $1 RETURNING id, quantity, sku_id`
+    const query = `UPDATE sku_inventory SET "quantity" = $3, "updated_at" = $4 WHERE sku_id = $1 AND store_id = $2 RETURNING id, quantity, sku_id`
     return this.db.query(query, Object.values(payload))
 }
 

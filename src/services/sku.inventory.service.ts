@@ -15,6 +15,7 @@ SkuInventoryService.prototype.getSkusInventory = async function(store: Store) {
     }
 }
 
+
 SkuInventoryService.prototype.getSkuInventory = async function(skuInventoryId: number, storeId: number) {
     try {
         const result = await this.skuInventoryRepository.getSkuInventory(skuInventoryId, storeId)        
@@ -26,7 +27,7 @@ SkuInventoryService.prototype.getSkuInventory = async function(skuInventoryId: n
 
 SkuInventoryService.prototype.updateSkuInventory = async function(skuInventory: SkuInventory) {
     try {
-        let pay = await this.getSkuInventory(skuInventory.id, skuInventory.store.id)
+        let pay = await this.getSkuInventory(skuInventory.sku.id, skuInventory.store.id)
         if(!pay)
             throw new Error("inventario nao encontrado")
         skuInventory.updated_at = new Date

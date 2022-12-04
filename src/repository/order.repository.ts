@@ -37,10 +37,12 @@ OrderRepository.prototype.getOrder = async function(orderId: number, storeId: nu
     const query = `SELECT o.id, o.total, o.status, o.delivery_status, o.canceled, o.created_at, o.updated_at,
     json_strip_nulls(json_build_object('id', pm.id, 'name', pm.name, 'description', pm.description)) AS payment,
     json_strip_nulls(json_build_object('id', c.id, 'name', c.name, 'email', c.email, 'cpf', c.cpf, 'phone_number', c.phone_number)) AS client,
+    json_strip_nulls(json_build_object('id', st.id)) AS store,
     json_strip_nulls(json_agg(json_build_object('id', s.id, 'name', s.name, 'description', s.description, 'active', s.active, 'price', s.price, 'quantity', oi.quantity))) AS items
     FROM Orders o
     LEFT JOIN payment_method pm ON pm.id = o.payment_method_id
     LEFT JOIN client c ON c.id = o.client_id
+    LEFT JOIN store st ON st.id = o.store_id
     LEFT JOIN order_item oi ON oi.order_id = o.id
     LEFT JOIN sku s ON s.id = oi.sku_id
     WHERE o.store_id = $2
@@ -54,7 +56,8 @@ OrderRepository.prototype.getOrder = async function(orderId: number, storeId: nu
     o.created_at,
     o.updated_at,
     pm.id,
-    c.id
+    c.id,
+    st.id
     `
     return this.db.query(query, [orderId, storeId])    
 }

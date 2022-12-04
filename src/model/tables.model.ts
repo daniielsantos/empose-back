@@ -111,7 +111,7 @@ Tables.prototype.create = async function() {
     query = `CREATE TABLE IF NOT EXISTS Sku_image(
         id SERIAL PRIMARY KEY,
         name CHARACTER VARYING(150),
-        url CHARACTER VARYING(250),
+        path CHARACTER VARYING(250),
         sku_id INT NOT NULL REFERENCES Sku(id) ON DELETE CASCADE,
         store_id INT NOT NULL REFERENCES Store(id) ON DELETE CASCADE,
         created_at TIMESTAMP,

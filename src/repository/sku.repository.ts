@@ -2,16 +2,22 @@ import { db } from "../services/db.service"
 import format from "pg-format"
 import { Sku } from "../model/sku.model"
 import { skuInventoryRepository } from "./sku.inventory"
+import os from "os"
 
 function SkuRepository(){
     this.db = db
     this.skuInventoryRepository = skuInventoryRepository
 }
+let ipAddr: any
+const getLocalIp = function() {
+    let inter = os.networkInterfaces().Ethernet.find(it => it.family == 'IPv4')
+    ipAddr = inter.address + ':' + process.env.SERVER_PORT + '/'
+}()
 
 SkuRepository.prototype.getSkus = async function(storeId: number) {
     const query = `SELECT s.id, s.name, s.description, s.active, s.price, s.created_at, s.updated_at,
     json_strip_nulls(json_build_object('id', p.id)) AS product,
-    json_strip_nulls(json_agg(json_build_object('id', si.id, 'url', si.url, 'name', si.name, 'created_at', si.created_at, 'updated_at', si.updated_at))) AS images
+    json_strip_nulls(json_agg(json_build_object('id', si.id, 'path', '${ipAddr}' || si.path, 'name', si.name, 'created_at', si.created_at, 'updated_at', si.updated_at))) AS images
     FROM sku s
     LEFT JOIN product p ON p.id = s.product_id
     LEFT JOIN sku_image si ON si.sku_id = s.id
@@ -34,7 +40,7 @@ SkuRepository.prototype.getSkus = async function(storeId: number) {
 SkuRepository.prototype.getSku = async function(skuId: number, storeId: number) {
     const query = `SELECT s.id, s.name, s.description, s.active, s.price, s.created_at, s.updated_at,    
     json_strip_nulls(json_build_object('id', p.id)) AS product,
-    json_strip_nulls(json_agg(json_build_object('id', si.id, 'url', si.url, 'name', si.name, 'created_at', si.created_at, 'updated_at', si.updated_at))) AS images
+    json_strip_nulls(json_agg(json_build_object('id', si.id, 'path', '${ipAddr}' || si.path, 'name', si.name, 'created_at', si.created_at, 'updated_at', si.updated_at))) AS images
     FROM sku s
     LEFT JOIN product p ON p.id = s.product_id
     LEFT JOIN sku_image si ON si.sku_id = s.id
@@ -82,13 +88,13 @@ SkuRepository.prototype.saveSku = async function(sku: Sku) {
         let img = {
             id: sk.rows[0].id,
             name: item.name,
-            url: item.url,
+            path: item.path,
             created_at: new Date,
             store_id: sk.rows[0].store_id
         }
         skus.push(Object.values(img))
     })
-    const imagesQuery = format(`INSERT INTO sku_image("sku_id","name","url", "created_at", "store_id") VALUES %L RETURNING *;`, skus)
+    const imagesQuery = format(`INSERT INTO sku_image("sku_id","name","path", "created_at", "store_id") VALUES %L RETURNING *;`, skus)
     const result = await this.db.query(imagesQuery)
 
     let skSaved: Sku = {...sk.rows[0]}
@@ -110,13 +116,11 @@ SkuRepository.prototype.updateSku = async function(sku: Sku) {
     }
     const query = `UPDATE Sku SET "name" = $2, "description" = $3, "active" = $4, "price" = $5, "product_id" = $6, "updated_at" = $7 WHERE id = $1 RETURNING *;`
     const sk = await this.db.query(query, Object.values(payload))
-    if(!sku.images.length)
-        return sk.rows[0]
     sku.images.forEach(item => {
         let pld = {
             id: sk.rows[0].id,
             name: item.name,
-            url: item.url,
+            path: item.path,
             created_at: new Date,
             store_id: sk.rows[0].store_id
         }
@@ -124,12 +128,15 @@ SkuRepository.prototype.updateSku = async function(sku: Sku) {
     })
     const del_skus = `DELETE FROM sku_image WHERE sku_id = $1`
     await this.db.query(del_skus, [sku.id])
-    
-    const addrs = format(`INSERT INTO sku_image("sku_id","name","url", "created_at", "store_id") VALUES %L RETURNING *;`, skus)
-    const result = await this.db.query(addrs)
-    let skSaved: Sku = {...sk.rows[0]}
-    skSaved.images = result.rows
-    return skSaved
+    if(skus.length){
+        const addrs = format(`INSERT INTO sku_image("sku_id","name","path", "created_at", "store_id") VALUES %L RETURNING *;`, skus)
+        const result = await this.db.query(addrs)
+        let skSaved: Sku = {...sk.rows[0]}
+        skSaved.images = result.rows
+        return skSaved
+    } else {
+        return sk.rows[0]
+    }
 }
 
 SkuRepository.prototype.saveSkuIfNotExist = async function(sku: Sku) {
