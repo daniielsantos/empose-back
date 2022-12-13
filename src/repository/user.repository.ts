@@ -48,7 +48,7 @@ UsersRepository.prototype.getUsers = async function(storeId: number):Promise<Use
 
 UsersRepository.prototype.saveUser = async function(user: Users): Promise<Users> {
     if(!user.role)
-        user.role = "manager"
+        user.role = "ADMIN"
 
     const payload = {
         name: user.name,
@@ -58,6 +58,7 @@ UsersRepository.prototype.saveUser = async function(user: Users): Promise<Users>
         store_id: user.store.id,
         createdAt: new Date
     }
+    
     const query = format(`INSERT INTO Users(name, email, password, role, store_id, created_at) VALUES (%L) RETURNING *`, Object.values(payload)) 
     return this.db.query(query)
 }
