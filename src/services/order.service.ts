@@ -178,9 +178,7 @@ OrderService.prototype.updateOrder = async function(order: Orders) {
         await this.orderInventoryUpdate(order)
         const result = await this.orderRepository.updateOrder(order)
         return result
-        return null
     } catch(e) {
-        console.log("eeee ", e.message)
         throw new Error(e.message)
     }
 }
