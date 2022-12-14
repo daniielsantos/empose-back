@@ -33,7 +33,15 @@ OrderService.prototype.processOrder = async function(order: Orders) {
         total += (parseFloat(priceWithDiscount.toString()) * it.quantity)
         i++
     }
-    await this.updateInventory(order, true)
+    // atualizar inventario
+    for await (const it of order.items) {
+        let inv: SkuInventory = await this.skuInventoryService.getSkuInventory(it.id, order.store.id)
+        if(it.quantity > inv.quantity) {
+            throw new Error(`Sku id: ${it.id} sem estoque!`)
+        }
+        inv.quantity = inv.quantity - it.quantity
+        await this.skuInventoryService.updateSkuInventory(inv)
+    }
 
     order.total = total
     return order
@@ -153,6 +161,7 @@ OrderService.prototype.saveOrder = async function(order: Orders) {
         let result = await this.orderRepository.saveOrder(ord)
         return result
     } catch(e) {
+        console.log("erro ", e.message)
         throw new Error(e.message)
     }
 }
