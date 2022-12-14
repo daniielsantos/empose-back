@@ -1,5 +1,5 @@
 import { Store } from "../model/store.model"
-import { Orders } from "../model/order.model"
+import { OrderItem, Orders } from "../model/order.model"
 import { orderRepository } from "../repository/order.repository"
 import { clientService } from "./client.service"
 import { paymentMethodService } from "./payment.method.service"
@@ -39,16 +39,63 @@ OrderService.prototype.processOrder = async function(order: Orders) {
     return order
 }
 
-OrderService.prototype.updateInventory = async function(order: Orders, subtract: boolean) {
-    if(subtract) {
-        for await (const it of order.items) {
+OrderService.prototype.checkAndUpdateOrderItemsInventory = async function(order: Orders, newOrder: Orders) {
+    for await (const it of order.items) {
+        let res = newOrder.items.find(i => i.id == it.id)
+        if(res && res.quantity != it.quantity) {
             let inv: SkuInventory = await this.skuInventoryService.getSkuInventory(it.id, order.store.id)
-            console.log("inv ", inv.quantity ,' order ', it.quantity)
-            if(inv.quantity < it.quantity)
-                throw new Error(`sku ${it.id} sem estoque!`)
+            if(res.quantity > inv.quantity) {
+                throw new Error(`Sku id: ${it.id} sem estoque!`)
+            }
+        }
+    }
+    for await (const it of newOrder.items) {
+        let res = order.items.find(i => i.id == it.id)
+        if(!res) {
+            let inv: SkuInventory = await this.skuInventoryService.getSkuInventory(it.id, order.store.id)
+            if(it.quantity > inv.quantity) {
+                throw new Error(`Sku id: ${it.id} sem estoque!`)
+            }
+        }
+    }
+    await this.hasDeletedItem(order, newOrder)
+    //new items in the order
+    for await (const it of newOrder.items) {
+        let res = order.items.find(i => i.id == it.id)
+        if(!res) {
+            let inv: SkuInventory = await this.skuInventoryService.getSkuInventory(it.id, order.store.id)
             inv.quantity = inv.quantity - it.quantity
             await this.skuInventoryService.updateSkuInventory(inv)
         }
+    }
+    //update keept items that change quantity
+    for await (const it of order.items) {
+        let res = newOrder.items.find(i => i.id == it.id)
+        if(res && res.quantity != it.quantity) {
+            let inv: SkuInventory = await this.skuInventoryService.getSkuInventory(it.id, order.store.id)
+            inv.quantity = inv.quantity - it.quantity
+            await this.skuInventoryService.updateSkuInventory(inv)
+        }
+    }
+}
+
+OrderService.prototype.hasDeletedItem = async function(order: Orders, newOrder: Orders) {
+    let deletedItems: OrderItem[] = []
+    for await (const it of order.items) {
+        let res = newOrder.items.find(i => i.id == it.id)
+        if(!res) {
+            deletedItems.push(it)
+            let inv: SkuInventory = await this.skuInventoryService.getSkuInventory(it.id, order.store.id)
+            inv.quantity = inv.quantity + it.quantity
+            await this.skuInventoryService.updateSkuInventory(inv)
+        }
+    }
+    return deletedItems
+}
+
+OrderService.prototype.updateInventory = async function(order: Orders, subtract: boolean, newOrder: Orders) {
+    if(subtract) {
+        await this.checkAndUpdateOrderItemsInventory(order, newOrder)
     } else {
         for await (const it of order.items) {
             let inv: SkuInventory = await this.skuInventoryService.getSkuInventory(it.id, order.store.id)
@@ -58,11 +105,11 @@ OrderService.prototype.updateInventory = async function(order: Orders, subtract:
     }
 }
 
+
 OrderService.prototype.orderInventoryUpdate = async function(order: Orders) {
     let ord: Orders = await this.getOrder(order.id, order.store.id)
     if(!order.canceled && ord.status == order.status && ord.delivery_status == order.delivery_status) {
-        await this.updateInventory(order, true)
-        await this.updateInventory(ord, false)
+        await this.updateInventory(ord, true, order)
     } else if(order.canceled && ord.status == order.status && ord.delivery_status == order.delivery_status){
         await this.updateInventory(order, false)
     }
@@ -122,6 +169,7 @@ OrderService.prototype.updateOrder = async function(order: Orders) {
         await this.orderInventoryUpdate(order)
         const result = await this.orderRepository.updateOrder(order)
         return result
+        return null
     } catch(e) {
         console.log("eeee ", e.message)
         throw new Error(e.message)
