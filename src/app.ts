@@ -235,7 +235,11 @@ function makeApp(
             const result = await paymentMethodController.deletePaymentMethod(req.body, req.user)
             res.send(result)            
         } catch (e) {
-            res.status(400).send({ message: e.message })            
+            if(e.message.includes('update')) {
+                res.status(400).send({ message: "Meio de pagamento não pode ser removido" })
+            } else {
+                res.status(400).send({ message: e.message })
+            }
         }
     })
 
@@ -320,7 +324,11 @@ app.delete("/api/v1/configs", isAuthenticated, async (req: Req, res: Response) =
             const result = await categoryController.deleteCategory(req.body, req.user)
             res.send(result)
         } catch (e) {
-            res.status(400).send({ message: e.message })
+            if(e.message.includes('update')) {
+                res.status(400).send({ message: "Categoria não pode ser removido" })
+            } else {
+                res.status(400).send({ message: e.message })
+            }
         }
     })
 // -----------------------------
@@ -366,7 +374,11 @@ app.delete("/api/v1/configs", isAuthenticated, async (req: Req, res: Response) =
             const result = await skuController.deleteSku(req.body, req.user)
             res.send(result)
         } catch (e) {
-            res.status(400).send({ message: e.message })
+            if(e.message.includes('update')) {
+                res.status(400).send({ message: "Sku não pode ser removido" })
+            } else {
+                res.status(400).send({ message: e.message })
+            }
         }
     })
 // -----------------------------
@@ -419,7 +431,7 @@ app.delete("/api/v1/configs", isAuthenticated, async (req: Req, res: Response) =
     })
 
     app.post("/api/v1/product", isAuthenticated, async (req: Req, res: Response) => {
-        try {
+        try {            
             const result = await productController.saveProduct(req.body, req.user)
             res.send(result)
         } catch (e) {
@@ -441,7 +453,11 @@ app.delete("/api/v1/configs", isAuthenticated, async (req: Req, res: Response) =
             const result = await productController.deleteProduct(req.body, req.user)
             res.send(result)
         } catch (e) {
-            res.status(400).send({ message: e.message })
+            if(e.message.includes('update')) {
+                res.status(400).send({ message: "Produto não pode ser removido" })
+            } else {
+                res.status(400).send({ message: e.message })
+            }
         }
     })
 // -----------------------------

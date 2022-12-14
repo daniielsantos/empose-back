@@ -64,7 +64,7 @@ Tables.prototype.create = async function() {
         id SERIAL PRIMARY KEY,
         name CHARACTER VARYING(150) NOT NULL,
         description CHARACTER VARYING(250),
-        store_id INT NOT NULL REFERENCES Store(id) ON DELETE CASCADE,
+        store_id INT NOT NULL REFERENCES Store(id),
         created_at TIMESTAMP,
         updated_at TIMESTAMP
     )`
@@ -74,7 +74,7 @@ Tables.prototype.create = async function() {
         id SERIAL PRIMARY KEY,
         name CHARACTER VARYING(150) NOT NULL,
         description CHARACTER VARYING(250),
-        store_id INT NOT NULL REFERENCES Store(id) ON DELETE CASCADE,
+        store_id INT NOT NULL REFERENCES Store(id),
         created_at TIMESTAMP,
         updated_at TIMESTAMP
     )`
@@ -86,13 +86,12 @@ Tables.prototype.create = async function() {
         description CHARACTER VARYING(150),
         active BOOLEAN,
         discount DECIMAL,
-        category_id INT NOT NULL REFERENCES Category(id) ON DELETE CASCADE,
-        store_id INT NOT NULL REFERENCES Store(id) ON DELETE CASCADE,
+        category_id INT NOT NULL REFERENCES Category(id),
+        store_id INT NOT NULL REFERENCES Store(id),
         created_at TIMESTAMP,
         updated_at TIMESTAMP
     )`
     await this.db.query(query)
-
 
 
     query = `CREATE TABLE IF NOT EXISTS Sku(
@@ -101,12 +100,13 @@ Tables.prototype.create = async function() {
         description CHARACTER VARYING(150),
         active BOOLEAN,
         price NUMERIC(7, 2),
-        product_id INT NOT NULL REFERENCES Product(id) ON DELETE CASCADE,
-        store_id INT NOT NULL REFERENCES Store(id) ON DELETE CASCADE,
+        product_id INT NOT NULL REFERENCES Product(id),
+        store_id INT NOT NULL REFERENCES Store(id),
         created_at TIMESTAMP,
         updated_at TIMESTAMP
     )`
     await this.db.query(query)
+
 
     query = `CREATE TABLE IF NOT EXISTS Sku_image(
         id SERIAL PRIMARY KEY,
@@ -119,6 +119,7 @@ Tables.prototype.create = async function() {
     )`
     await this.db.query(query)
 
+    
     query = `CREATE TABLE IF NOT EXISTS Sku_inventory(
         id SERIAL PRIMARY KEY,
         quantity INT,
@@ -134,9 +135,9 @@ Tables.prototype.create = async function() {
         total NUMERIC(9, 2),
         status INT,
         delivery_status INT,
-        payment_method_id INT REFERENCES Payment_method(id) ON DELETE CASCADE,
-        client_id INT REFERENCES Client(id) ON DELETE CASCADE,
-        store_id INT NOT NULL REFERENCES Store(id) ON DELETE CASCADE,
+        payment_method_id INT REFERENCES Payment_method(id),
+        client_id INT REFERENCES Client(id),
+        store_id INT NOT NULL REFERENCES Store(id),
         canceled BOOLEAN,
         created_at TIMESTAMP,
         updated_at TIMESTAMP
@@ -147,7 +148,7 @@ Tables.prototype.create = async function() {
         id SERIAL PRIMARY KEY,
         quantity INT,
         order_id INT NOT NULL REFERENCES Orders(id) ON DELETE CASCADE,
-        sku_id INT NOT NULL REFERENCES Sku(id) ON DELETE CASCADE,
+        sku_id INT NOT NULL REFERENCES Sku(id),
         store_id INT NOT NULL REFERENCES Store(id) ON DELETE CASCADE,
         created_at TIMESTAMP,
         updated_at TIMESTAMP
