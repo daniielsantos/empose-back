@@ -32,13 +32,13 @@ UploadFileService.prototype.uploadFile = async function(req: Req, res: Response)
         let fileName, filePath
         const store = this.getStore(req.user)
         const form = new formidable.IncomingForm();
-        let uploadPath = path.resolve('./src/uploads') +'\\'
+        let uploadPath = path.resolve('./src/uploads') +'\/'
 
         await new Promise((resolve, reject) => {
             form.parse(req, function (err, fields, files) {
                 const oldpath = files.file.filepath;
                 fileName = files.file.originalFilename
-                filePath = 'uploads/' + fileName
+                filePath = 'uploads' + '\/' + fileName
                 const newpath = uploadPath + fileName
                 if (err) reject('error');
                 fs.rename(oldpath, newpath, function (err) {

@@ -10,8 +10,9 @@ function SkuRepository(){
 }
 let ipAddr: any
 const getLocalIp = function() {
-    let inter = os.networkInterfaces().Ethernet.find(it => it.family == 'IPv4')
-    ipAddr = inter.address + ':' + process.env.SERVER_PORT + '/'
+    // let inter = os.networkInterfaces().Ethernet.find(it => it.family == 'IPv4')
+    // ipAddr = inter.address + ':' + process.env.SERVER_PORT + '/'
+    ipAddr = 'ip-publico:'+ process.env.SERVER_PORT + '/'
 }()
 
 SkuRepository.prototype.getSkus = async function(storeId: number) {
